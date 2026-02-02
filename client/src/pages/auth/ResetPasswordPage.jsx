@@ -6,4 +6,4 @@
    )
  }
  
- export default ResetPasswordPage
+ export default ResetPasswordPage 
