@@ -27,6 +27,7 @@ export const isAuthorized = (...roles) => {
             403
         ))
       }
+      next();
     }
 }
 
