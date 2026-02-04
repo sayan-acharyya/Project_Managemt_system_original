@@ -130,11 +130,23 @@ export const deleteTeacher = asyncHandler(async (req, res, next) => {
 })
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-    const users = await userServices.getAllUsers(); 
+    const users = await userServices.getAllUsers();
 
     res.status(200).json({
         success: true,
         message: "users fetched successfully",
-        data: { users } 
+        data: { users }
     });
 });
+
+export const getAllProjects = asyncHandler(async (req, res, next) => {
+
+})
+
+export const assignSuppervisor = asyncHandler(async (req, res, next) => {
+
+})
+
+export const getDashboardStates = asyncHandler(async (req, res, next) => {
+
+})
