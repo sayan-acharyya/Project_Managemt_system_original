@@ -18,6 +18,7 @@ const App = () => {
     dispatch(getUser());
   }, [dispatch]);
 
+  
   if (isCheckingAuth && !authUser) {
     return (
       <div className='flex justify-center items-center h-screen'>
