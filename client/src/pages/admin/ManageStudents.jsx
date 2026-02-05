@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createSudent, getAllUsers, updateSudent } from '../../store/slices/adminSlice';
+import { createSudent, deleteSudent, getAllUsers, updateSudent } from '../../store/slices/adminSlice';
 
 const ManageStudents = () => {
   const { users, projects } = useSelector(state => state.admin);
@@ -77,7 +77,35 @@ const ManageStudents = () => {
     }
     handleCloseModel();
   }
- 
+
+  const handleEdit = (student) => {
+    setEditingStudent(student);
+    setFormData({
+      name: student.name,
+      email: student.email,
+      department: student.department,
+    });
+    setShowModal(true);
+  }
+
+  const handleDelete = (student) => {
+    setStudentToDelete(student);
+    setShowDeleteModel(true);
+  }
+
+  const confirmDelete = () => {
+    if (studentToDelete) {
+      dispatch(deleteSudent(studentToDelete._id));
+      setShowDeleteModel(false);
+      setStudentToDelete(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModel(false);
+    setStudentToDelete(null);
+  }
+
   return (
     <div>ManageStudents</div>
   )
