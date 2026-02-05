@@ -4,6 +4,6 @@
    return (
      <div>ManageStudents</div>
    )
- }
+ } 
  
  export default ManageStudents

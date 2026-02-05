@@ -6,4 +6,4 @@
    )
  }
  
- export default DeadlinesPage
+ export default DeadlinesPage 

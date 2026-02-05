@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import React from "react";
 
 const Sidebar = ({ open, setOpen, userRole }) => {
   const location = useLocation();

@@ -32,7 +32,7 @@ const DashboardLayout = ({ userRole }) => {
         >
           <div className="p-6">
             <Outlet />
-          </div>
+          </div> 
         </main>
       </div>
 

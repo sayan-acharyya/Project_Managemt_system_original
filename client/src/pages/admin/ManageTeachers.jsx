@@ -6,4 +6,4 @@
    )
  }
  
- export default ManageTeachers
+ export default ManageTeachers 
