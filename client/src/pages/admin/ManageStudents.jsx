@@ -1,11 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { createSudent, deleteSudent, getAllUsers, updateSudent } from '../../store/slices/adminSlice';
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createSudent,
+  deleteSudent,
+  getAllUsers,
+  updateSudent,
+} from "../../store/slices/adminSlice";
+import { CheckCircle, ChevronDown, Filter, Plus, Search, TriangleAlert, Users, UserSquare2 } from "lucide-react";
+import { toggleStudentModel } from "../../store/slices/popupSlice";
 
 const ManageStudents = () => {
-  const { users, projects } = useSelector(state => state.admin);
-  const { isCreateStudentModalOpen } = useSelector(state => state.popup);
+  const { users, projects } = useSelector((state) => state.admin);
   const dispatch = useDispatch();
+
   const [showModal, setShowModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,47 +23,62 @@ const ManageStudents = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    department: ""
-  })
+    department: "",
+  });
 
+  // Fetch users
+  useEffect(() => {
+    dispatch(getAllUsers());
+  }, [dispatch]);
+
+  // Prepare student list with project info
   const students = useMemo(() => {
-    const studentUsers = (users || []).filter(u => u.role?.toLowerCase() === "student");
+    const studentUsers = (users || []).filter(
+      (u) => u.role?.toLowerCase() === "student"
+    );
 
-    return studentUsers.map(student => {
+    return studentUsers.map((student) => {
       const studentProject = (projects || []).find(
-        p => p.student?._id === student._id
+        (p) => p.student?._id === student._id
       );
+
       return {
         ...student,
         projectTitle: studentProject?.title || null,
         supervisor: studentProject?.supervisor || null,
         projectStatus: studentProject?.status || null,
-      }
-    })
-  }, [users, projects])
+      };
+    });
+  }, [users, projects]);
 
-
-  useEffect(() => {
-    dispatch(getAllUsers());
-  }, [])
-
+  // Unique departments
   const departments = useMemo(() => {
-    const set = new Set(students || [])
-      .map((s) => s.department)
-      .filter(Boolean);
-    return Array.from(set);
+    const uniqueDepartments = new Set(
+      students.map((s) => s.department).filter(Boolean)
+    );
+    return Array.from(uniqueDepartments);
   }, [students]);
 
-  const filteredStudents = students.filter(student => {
-    const matchesSearch =
-      (student.name || "").toLowerCase().includes(searchTerm.toLowerCase());
-    (student.email || "").toLowerCase().includes(searchTerm.toLowerCase());
+  // Filtered students
+  const filteredStudents = useMemo(() => {
+    return students.filter((student) => {
+      const matchesSearch =
+        (student.name || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (student.email || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
-    const matchesFilter = filterDepartment === "all" || student.department === filterDepartment;
+      const matchesFilter =
+        filterDepartment === "all" ||
+        student.department === filterDepartment;
 
-    return matchesSearch && matchesFilter;
-  })
+      return matchesSearch && matchesFilter;
+    });
+  }, [students, searchTerm, filterDepartment]);
 
+  // Handlers
   const handleCloseModel = () => {
     setShowModal(false);
     setEditingStudent(null);
@@ -64,34 +86,35 @@ const ManageStudents = () => {
       name: "",
       email: "",
       department: "",
-    })
-  }
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (editingStudent) {
-      dispatch(updateSudent({ id: editingStudent._id, data: formData }))
+      dispatch(updateSudent({ id: editingStudent._id, data: formData }));
     } else {
-      dispatch(createSudent(formData))
+      dispatch(createSudent(formData));
     }
+
     handleCloseModel();
-  }
+  };
 
   const handleEdit = (student) => {
     setEditingStudent(student);
     setFormData({
-      name: student.name,
-      email: student.email,
-      department: student.department,
+      name: student.name || "",
+      email: student.email || "",
+      department: student.department || "",
     });
     setShowModal(true);
-  }
+  };
 
   const handleDelete = (student) => {
     setStudentToDelete(student);
     setShowDeleteModel(true);
-  }
+  };
 
   const confirmDelete = () => {
     if (studentToDelete) {
@@ -104,11 +127,109 @@ const ManageStudents = () => {
   const cancelDelete = () => {
     setShowDeleteModel(false);
     setStudentToDelete(null);
-  }
+  };
 
-  return (
-    <div>ManageStudents</div>
-  )
-}
+ return (
+  <div className="space-y-8 p-4 md:p-0">
+    {/* Header Section */}
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          Manage Students
+        </h1>
+        <p className="text-base text-gray-500 mt-1">
+          Monitor performance, track assignments, and manage student records.
+        </p>
+      </div>
 
-export default ManageStudents
+      <button
+        onClick={() => dispatch(toggleStudentModel())}
+        className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 
+                   text-white font-medium px-6 py-3 rounded-xl
+                   transition-all duration-200 shadow-sm hover:shadow-blue-200 hover:shadow-lg active:scale-95"
+      >
+        <Plus className="w-5 h-5" />
+        <span>Add New Student</span>
+      </button>
+    </div>
+
+    {/* Stats Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[
+        { 
+          label: "Total Students", 
+          value: students.length, 
+          icon: <UserSquare2 className="w-6 h-6 text-blue-600" />, 
+          bg: "bg-blue-50" 
+        },
+        { 
+          label: "Completed Projects", 
+          value: students.filter((s) => s.status === "completed").length, 
+          icon: <CheckCircle className="w-6 h-6 text-emerald-600" />, 
+          bg: "bg-emerald-50" 
+        },
+        { 
+          label: "Unassigned", 
+          value: students.filter((s) => !s.supervisor).length, 
+          icon: <TriangleAlert className="w-6 h-6 text-amber-600" />, 
+          bg: "bg-amber-50" 
+        },
+      ].map((stat, i) => (
+        <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center space-x-4">
+          <div className={`p-4 ${stat.bg} rounded-2xl`}>
+            {stat.icon}
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider">{stat.label}</p>
+            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Search & Filter Bar */}
+    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Search Input */}
+        <div className="relative flex-1 group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Search by name, email, or ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 
+                       focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-blue-500 
+                       outline-none transition-all text-gray-700"
+          />
+        </div>
+
+        {/* Department Filter */}
+        <div className="relative min-w-[200px]">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <select
+            value={filterDepartment}
+            onChange={(e) => setFilterDepartment(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 
+                       focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-blue-500 
+                       outline-none appearance-none transition-all text-gray-700 font-medium"
+          >
+            <option value="all">All Departments</option>
+            {departments.map((dept) => (
+              <option key={dept} value={dept}>{dept}</option>
+            ))}
+          </select>
+          {/* Custom Arrow for Select */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+            <ChevronDown className="w-4 h-4" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+);
+};
+
+export default ManageStudents;

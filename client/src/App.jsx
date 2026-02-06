@@ -1,4 +1,4 @@
-import React, { Children, useEffect } from 'react'
+import React, {  useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import LoginPage from './pages/auth/LoginPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
@@ -25,10 +25,10 @@ const App = () => {
     dispatch(getUser());
   }, [dispatch]);
 
-  const protectedRoute = ({ children, allowedRoles }) => {
+  const ProtectedRoute = ({ children, allowedRoles }) => {
 
     if (!authUser) {
-      <Navigate to={"/login"} replace />
+     return  <Navigate to={"/login"} replace />
     }
     if (allowedRoles?.length && authUser?.role && !allowedRoles.includes(authUser.role)) {
       const redirectPath =
@@ -63,9 +63,9 @@ const App = () => {
         <Route
           path="/admin"
           element={
-            <protectedRoute allowedRoles={["Admin"]}>
-              <DashboardLayout />
-            </protectedRoute>
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <DashboardLayout userRole={"Admin"}/>
+            </ProtectedRoute>
           }
         >
           <Route index element={<AdminDashboard />} />

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const popupSlice = createSlice({
     name: "popup",
-    initialState: {
+    initialState: { 
         isCreateStudentModalOpen: false,
         isCreateTeacherModalOpen: false,
     },
