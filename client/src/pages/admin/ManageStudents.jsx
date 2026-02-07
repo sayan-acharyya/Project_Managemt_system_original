@@ -6,7 +6,7 @@ import {
   getAllUsers,
   updateSudent,
 } from "../../store/slices/adminSlice";
-import { CheckCircle, ChevronDown, Filter, Plus, Search, TriangleAlert, Users, UserSquare2 } from "lucide-react";
+import { AlarmCheck, CheckCircle, ChevronDown, Filter, Plus, Search, TriangleAlert, Users, UserSquare2, X } from "lucide-react";
 import { toggleStudentModel } from "../../store/slices/popupSlice";
 
 const ManageStudents = () => {
@@ -234,116 +234,264 @@ const ManageStudents = () => {
         </div>
 
         <div className="overflow-x-auto ">
-          <table className="w-full">
-            <thead className="bg-slate-100 ">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Student Info
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Department & Year
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Supervisor
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Project Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="bg-white divide-y divide-slate-200 ">
-              {
-                filteredStudents.map(student => {
-                  return (
-                    <tr
-                      className="hover:bg-slate-50"
-                      key={student._id}>
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="text-sm font-medium text-slate-900">
-                            {student.name}
-                          </div>
-                          <div className="text-sm text-slate-500">
-                            {student.email}
-                          </div>
-                          {
-                            student.studentId && (
-                              <div className="text-xs text-slate-400 ">
-                                ID:{student.studentId}
-                              </div>
-                            )
-                          }
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-900">
-                          {student.department || "--"}
-                        </div>
-                        <div className="text-sm text-slate-500">
-                          {
-                            student.createdAt ? new Date(student.createdAt).getFullYear()
-                              : "--"
-                          }
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {
-                          student.supervisor ? (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-green-800 bg-green-100 text-xs font-medium ">
-                              {
-                                typeof student.supervisor === "object" ? student.supervisor.name || "--" : student.supervisor
-                              }
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-red-800 bg-red-100 text-xs font-medium ">
-                              {
-                                student.projectStatus === "rejected" ? "Rejected" : "Not Assigned"
-                              }
-
-                            </span>
-                          )
-                        }
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-slate-900 ">
-                          {student.projectTitle}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            className="bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-900 px-3 py-1 rounded-md transition-colors duration-200"
-                            onClick={() => handleEdit(student)}
-                          >
-                            Edit
-                          </button>
-
-                          <button
-                            className="bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-900 px-3 py-1 rounded-md transition-colors duration-200"
-                            onClick={() => handleDelete(student)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-
+          {
+            filteredStudents && filteredStudents.length > 0
+              ? (
+                <table className="w-full">
+                  <thead className="bg-slate-100 ">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                        Student Info
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                        Department & Year
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                        Supervisor
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                        Project Title
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  )
-                })
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  </thead>
 
+                  <tbody className="bg-white divide-y divide-slate-200 ">
+                    {
+                      filteredStudents.map(student => {
+                        return (
+                          <tr
+                            className="hover:bg-slate-50"
+                            key={student._id}>
+                            <td className="px-6 py-4">
+                              <div>
+                                <div className="text-sm font-medium text-slate-900">
+                                  {student.name}
+                                </div>
+                                <div className="text-sm text-slate-500">
+                                  {student.email}
+                                </div>
+                                {
+                                  student.studentId && (
+                                    <div className="text-xs text-slate-400 ">
+                                      ID:{student.studentId}
+                                    </div>
+                                  )
+                                }
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-slate-900">
+                                {student.department || "--"}
+                              </div>
+                              <div className="text-sm text-slate-500">
+                                {
+                                  student.createdAt ? new Date(student.createdAt).getFullYear()
+                                    : "--"
+                                }
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {
+                                student.supervisor ? (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-green-800 bg-green-100 text-xs font-medium ">
+                                    {
+                                      typeof student.supervisor === "object" ? student.supervisor.name || "--" : student.supervisor
+                                    }
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-red-800 bg-red-100 text-xs font-medium ">
+                                    {
+                                      student.projectStatus === "rejected" ? "Rejected" : "Not Assigned"
+                                    }
+
+                                  </span>
+                                )
+                              }
+                            </td>
+
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-slate-900 ">
+                                {student.projectTitle}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <div className="flex space-x-2">
+                                <button
+                                  className="bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-900 px-3 py-1 rounded-md transition-colors duration-200"
+                                  onClick={() => handleEdit(student)}
+                                >
+                                  Edit
+                                </button>
+
+                                <button
+                                  className="bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-900 px-3 py-1 rounded-md transition-colors duration-200"
+                                  onClick={() => handleDelete(student)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+
+                          </tr>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+              )
+              : <div className="text-center py-8 text-slate-500">
+                No students found matching your criteria.
+              </div>
+          }
+
+        </div>
+
+        {/* Edit student model */}
+        {
+          showModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+              <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white p-6 shadow-xl">
+
+                {/* Title */}
+                <h3 className="text-center text-lg font-semibold text-slate-800">
+                  Edit Student
+                </h3>
+
+                <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-600 mb-1">
+                      Student Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter student name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-600 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter email"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-600 mb-1">
+                      Department
+                    </label>
+                    <select
+                      required
+                      value={formData.department}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Department</option>
+                      <option value="Computer Science">Computer Science</option>
+                      <option value="Information Technology">Information Technology</option>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Electrical">Electrical</option>
+                      <option value="Mechanical">Mechanical</option>
+                      <option value="Civil">Civil</option>
+                      <option value="Data Science">Data Science</option>
+                      <option value="Cyber Security">Cyber Security</option>
+                      <option value="Machine Learning">Machine Learning</option>
+                      <option value="Economics">Economics</option>
+                    </select>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-4 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleCloseModel}
+                      className="flex-1 rounded-xl border border-slate-300 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="flex-1 rounded-xl bg-blue-600 py-2 text-sm text-white hover:bg-blue-700"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+          )
+        }
+
+        {
+          showDeleteModel && studentToDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+              <div className="relative w-full max-w-sm mx-4 rounded-2xl bg-white p-6 shadow-xl">
+
+                {/* Icon */}
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                  <span className="text-red-600 text-xl">!</span>
+                </div>
+
+                {/* Text */}
+                <h3 className="text-center text-lg font-semibold text-slate-800">
+                  Delete Student?
+                </h3>
+
+                <p className="mt-2 text-center text-sm text-slate-600">
+                  Are you sure you want to delete
+                  <span className="font-medium text-slate-800">
+                    {" "}{studentToDelete.name}
+                  </span>
+                  ?
+                  <br />
+                  This action cannot be undone.
+                </p>
+
+                {/* Actions */}
+                <div className="mt-6 flex gap-3">
+                  <button
+                    onClick={cancelDelete}
+                    className="flex-1 rounded-lg border border-slate-300 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                  onClick={confirmDelete}
+                    className="flex-1 rounded-lg bg-red-600 py-2 text-sm text-white hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )
+        }
+
+      </div>
     </div>
   );
 };
