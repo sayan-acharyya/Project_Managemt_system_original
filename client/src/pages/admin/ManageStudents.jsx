@@ -8,11 +8,12 @@ import {
 } from "../../store/slices/adminSlice";
 import { AlarmCheck, CheckCircle, ChevronDown, Filter, Plus, Search, TriangleAlert, Users, UserSquare2, X } from "lucide-react";
 import { toggleStudentModel } from "../../store/slices/popupSlice";
+import AddStudent from "../../components/modal/AddStudent";
 
 const ManageStudents = () => {
   const { users, projects } = useSelector((state) => state.admin);
   const dispatch = useDispatch();
-
+  const { isCreateStudentModalOpen } = useSelector((state) => state.popup)
   const [showModal, setShowModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -479,7 +480,7 @@ const ManageStudents = () => {
                   </button>
 
                   <button
-                  onClick={confirmDelete}
+                    onClick={confirmDelete}
                     className="flex-1 rounded-lg bg-red-600 py-2 text-sm text-white hover:bg-red-700"
                   >
                     Delete
@@ -491,6 +492,9 @@ const ManageStudents = () => {
           )
         }
 
+        {
+          isCreateStudentModalOpen && <AddStudent/>
+        }
       </div>
     </div>
   );
