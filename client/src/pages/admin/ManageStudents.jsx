@@ -27,11 +27,7 @@ const ManageStudents = () => {
     department: "",
   });
 
-  // Fetch users
-  useEffect(() => {
-    dispatch(getAllUsers());
-  }, [dispatch]);
-
+ 
   // Prepare student list with project info
   const students = useMemo(() => {
     const studentUsers = (users || []).filter(

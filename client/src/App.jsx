@@ -1,4 +1,4 @@
-import React, {  useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import LoginPage from './pages/auth/LoginPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
@@ -15,6 +15,7 @@ import ManageTeachers from './pages/admin/ManageTeachers'
 import AssignSupervisor from './pages/admin/AssignSupervisor'
 import DeadlinesPage from './pages/admin/DeadlinesPage'
 import ProjectsPage from './pages/admin/ProjectsPage'
+import { getAllUsers } from './store/slices/adminSlice'
 
 const App = () => {
 
@@ -25,10 +26,16 @@ const App = () => {
     dispatch(getUser());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (authUser?.role === "Admin") {
+      dispatch(getAllUsers());
+    }
+  }, [authUser])
+
   const ProtectedRoute = ({ children, allowedRoles }) => {
 
     if (!authUser) {
-     return  <Navigate to={"/login"} replace />
+      return <Navigate to={"/login"} replace />
     }
     if (allowedRoles?.length && authUser?.role && !allowedRoles.includes(authUser.role)) {
       const redirectPath =
@@ -64,7 +71,7 @@ const App = () => {
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={["Admin"]}>
-              <DashboardLayout userRole={"Admin"}/>
+              <DashboardLayout userRole={"Admin"} />
             </ProtectedRoute>
           }
         >

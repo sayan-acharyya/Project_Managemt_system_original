@@ -32,10 +32,7 @@ const ManageTeachers = () => {
     maxStudents: 10,
   });
 
-  // Fetch users on mount
-  useEffect(() => {
-    dispatch(getAllUsers());
-  }, [dispatch]);
+ 
 
   // Teachers list
   const teachers = useMemo(() => {
