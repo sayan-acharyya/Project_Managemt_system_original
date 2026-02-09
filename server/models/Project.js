@@ -84,5 +84,4 @@ projectSchema.index({ supervisor: 1 });
 projectSchema.index({ status: 1 });
 
 
-
 export const Project = mongoose.model("Project", projectSchema);
