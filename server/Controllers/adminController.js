@@ -2,6 +2,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.model.js";
 import * as userServices from "../services/userServices.js";
+import bcrypt from "bcrypt";
 
 export const createStudent = asyncHandler(async (req, res, next) => {
     const { name, email, password, department } = req.body;
@@ -9,11 +10,12 @@ export const createStudent = asyncHandler(async (req, res, next) => {
     if (!name || !email || !password || !department) {
         return next(new ErrorHandler("Please Provide all required feilds", 400))
     }
+    const newPassword = await bcrypt.hash(password, 10);
 
     const user = await userServices.createUser({
         name,
         email,
-        password,
+        password: newPassword,
         department,
         role: "Student"
     });
@@ -69,11 +71,12 @@ export const createTeacher = asyncHandler(async (req, res, next) => {
     if (!name || !email || !password || !department || !maxStudents || !experties) {
         return next(new ErrorHandler("Please Provide all required feilds", 400))
     }
+    const newPassword = await bcrypt.hash(password, 10);
 
     const user = await userServices.createUser({
         name,
         email,
-        password,
+        password: newPassword,
         department,
         maxStudents,
         experties: Array.isArray(experties)
