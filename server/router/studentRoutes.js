@@ -7,6 +7,7 @@ import {
     submitProposal, 
     uploadFiles 
 } from "../Controllers/studentController.js";
+import { handleUploadError, upload } from "../middlewares/upload.js";
 const router = express.Router();
 
 router.post("/project", isAuthenticated, isAuthorized("Student"), getStudentProject);
@@ -15,8 +16,8 @@ router.post(
     "/upload/:projectId",
     isAuthenticated,
     isAuthorized("Student"),
-    //upload.array("files", 10), 
-    //handleUploadError, 
+    upload.array("files", 10), 
+    handleUploadError, 
     uploadFiles
 );
 router.get(
