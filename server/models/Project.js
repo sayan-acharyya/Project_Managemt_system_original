@@ -23,7 +23,7 @@ const projectSchema = new mongoose.Schema({
         trim: true,
         maxlength: [2000, "description can't be more then 2000 characters"],
     },
-    status: {
+    status: { 
         type: String,
         default: "pending",
         enum: ["pending", "rejected", "approved", "completed"],
