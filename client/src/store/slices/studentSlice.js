@@ -17,6 +17,48 @@ export const submitProjectProposal = createAsyncThunk(
         return thunkAPI.rejectWithValue(error.response.data.message)
     }
 )
+
+export const fetchProject = createAsyncThunk("fetchProject", async (_, thunkAPI) => {
+    try {
+        const res = await axiosInstance.get("/student/project");
+        return res.data.data?.project;
+    } catch (error) {
+        toast.error(error.response.data.message || "Failed to fetch project");
+        return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+})
+
+export const getSupervisor = createAsyncThunk("getSupervisor", async (_, thunkAPI) => {
+    try {
+        const res = await axiosInstance.get("/student/supervisor");
+        return res.data.data?.supervisor;
+    } catch (error) {
+        toast.error(error.response.data.message || "Failed to fetch supervisor");
+        return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+})
+
+export const fetchAllSupervisor = createAsyncThunk("fetchAllSupervisor", async (_, thunkAPI) => {
+    try {
+        const res = await axiosInstance.get("/student/fetch-supervisors");
+        return res.data.data?.supervisors;
+    } catch (error) {
+        toast.error(error.response.data.message || "Failed to fetch available supervisors");
+        return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+})
+
+export const requestSupervisor = createAsyncThunk("requestSupervisor", async (data, thunkAPI) => {
+    try {
+        const res = await axiosInstance.post("/student/request-supervisor", data);
+        return res.data.data?.request;
+    } catch (error) {
+        toast.error(error.response.data.message || "Failed to request supervisors");
+        return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+})
+
+
 const studentSlice = createSlice({
     name: "student",
     initialState: {
@@ -30,7 +72,22 @@ const studentSlice = createSlice({
         status: null,
     },
     reducers: {},
-    extraReducers: (builder) => { },
+    extraReducers: (builder) => {
+
+        builder.addCase(submitProjectProposal.fulfilled, (state, action) => {
+            state.project = action.payload?.project || action.payload;
+        })
+        builder.addCase(fetchProject.fulfilled, (state, action) => {
+            state.project = action.payload?.project || action.payload || null;
+        })
+        builder.addCase(getSupervisor.fulfilled, (state, action) => {
+            state.supervisor = action.payload?.supervisor || action.payload || null;
+        })
+        builder.addCase(fetchAllSupervisor.fulfilled, (state, action) => {
+            state.supervisors = action.payload?.supervisors || action.payload || [];
+        })
+        
+    },
 });
 
 export default studentSlice.reducer;

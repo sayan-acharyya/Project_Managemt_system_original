@@ -1,23 +1,25 @@
 import express from "express";
 import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js";
 import multer from "multer";
-import { 
-    getAvailableSupervisors, 
-    getStudentProject, 
-    submitProposal, 
-    uploadFiles 
+import {
+    getAvailableSupervisors,
+    getStudentProject,
+    getSupervisor,
+    requestSupervisor,
+    submitProposal,
+    uploadFiles
 } from "../Controllers/studentController.js";
 import { handleUploadError, upload } from "../middlewares/upload.js";
 const router = express.Router();
 
-router.post("/project", isAuthenticated, isAuthorized("Student"), getStudentProject);
+router.get("/project", isAuthenticated, isAuthorized("Student"), getStudentProject);
 router.post("/project-proposal", isAuthenticated, isAuthorized("Student"), submitProposal);
 router.post(
     "/upload/:projectId",
     isAuthenticated,
     isAuthorized("Student"),
-    upload.array("files", 10), 
-    handleUploadError, 
+    upload.array("files", 10),
+    handleUploadError,
     uploadFiles
 );
 router.get(
@@ -25,6 +27,20 @@ router.get(
     isAuthenticated,
     isAuthorized("Student"),
     getAvailableSupervisors
+)
+
+router.get(
+    "/supervisor",
+    isAuthenticated,
+    isAuthorized("Student"),
+    getSupervisor
+)
+
+router.post(
+    "/request-supervisor",
+    isAuthenticated,
+    isAuthorized("Student"),
+    requestSupervisor
 )
 
 
