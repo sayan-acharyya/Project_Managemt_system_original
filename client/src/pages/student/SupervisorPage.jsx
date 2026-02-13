@@ -6,4 +6,4 @@
    )
  }
  
- export default SupervisorPage
+ export default SupervisorPage 

@@ -16,6 +16,12 @@ import AssignSupervisor from './pages/admin/AssignSupervisor'
 import DeadlinesPage from './pages/admin/DeadlinesPage'
 import ProjectsPage from './pages/admin/ProjectsPage'
 import { getAllUsers } from './store/slices/adminSlice'
+import SubmitProposal from './pages/student/SubmitProposal'
+import UploadFiles from './pages/student/UploadFiles'
+import SupervisorPage from './pages/student/SupervisorPage'
+import FeedbackPage from './pages/student/FeedbackPage'
+import NotificationsPage from './pages/student/NotificationsPage'
+import StudentDashboard from './pages/student/StudentDashboard'
 
 const App = () => {
 
@@ -83,6 +89,26 @@ const App = () => {
           <Route path='projects' element={<ProjectsPage />} />
 
         </Route>
+
+
+        {/* student routes */}
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRoles={["Student"]}>
+              <DashboardLayout userRole={"Student"} />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<StudentDashboard />} />
+          <Route path='submit-proposal' element={<SubmitProposal />} />
+          <Route path='upload-files' element={<UploadFiles />} />
+          <Route path='supervisor' element={<SupervisorPage />} />
+          <Route path='feedback' element={<FeedbackPage />} />
+          <Route path='notifications' element={<NotificationsPage />} />
+
+        </Route>
+
 
       </Routes>
       <ToastContainer

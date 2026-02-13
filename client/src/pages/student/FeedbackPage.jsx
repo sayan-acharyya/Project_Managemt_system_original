@@ -6,4 +6,4 @@
    )
  }
  
- export default FeedbackPage
+ export default FeedbackPage 

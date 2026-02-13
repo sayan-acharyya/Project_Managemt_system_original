@@ -6,4 +6,4 @@
    )
  }
  
- export default NotificationsPage
+ export default NotificationsPage 
