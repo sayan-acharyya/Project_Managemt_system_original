@@ -147,9 +147,9 @@ export const getAllProjects = asyncHandler(async (req, res, next) => {
 })
 
 export const assignSuppervisor = asyncHandler(async (req, res, next) => {
-
+   
 })
-
+  
 export const getDashboardStates = asyncHandler(async (req, res, next) => {
 
 })
