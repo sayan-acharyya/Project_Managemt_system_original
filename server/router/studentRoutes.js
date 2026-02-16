@@ -3,6 +3,8 @@ import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js"
 import multer from "multer";
 import {
     getAvailableSupervisors,
+    getDashboardStats,
+    getFeedback,
     getStudentProject,
     getSupervisor,
     requestSupervisor,
@@ -43,6 +45,19 @@ router.post(
     requestSupervisor
 )
 
+router.get(
+    "/feedback/:projectId",
+    isAuthenticated,
+    isAuthorized("Student"),
+    getFeedback
+)
+
+router.get(
+    "/fetch-dashboard-states",
+    isAuthenticated,
+    isAuthorized("Student"),
+    getDashboardStats
+)
 
 export default router;
 

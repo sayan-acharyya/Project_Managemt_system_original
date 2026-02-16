@@ -1,5 +1,5 @@
 import React from 'react'
-import { Archive, File, FileCodeCorner, FileText, Presentation } from "lucide-react"
+import { Archive, File, FileCodeCorner, FilePlus, FileText, Presentation } from "lucide-react"
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import { useState } from 'react';
@@ -70,84 +70,202 @@ const UploadFiles = () => {
   };
 
   return (
-    <>
-      <div className='space-y-6'>
-        <div className='card'>
-          <div className='card-header'>
-            <h1 className='card-title'>Upload Project Files</h1>
-            <p className='card-subtitle'>
-              upload your project decuments including
-              reports, presentations and code files.
+    <div className="max-w-6xl mx-auto space-y-8">
+
+      {/* HEADER */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h1 className="text-2xl font-bold text-slate-800">
+          Upload Project Files
+        </h1>
+        <p className="text-slate-500 mt-1 text-sm">
+          Upload your project documents including reports, presentations and source code.
+        </p>
+
+        {/* UPLOAD GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+
+          {/* REPORT */}
+          <div className="group border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200">
+            <FileText className="w-12 h-12 text-slate-400 mx-auto group-hover:text-indigo-500 transition" />
+            <h3 className="text-lg font-semibold mt-4 text-slate-800">Report</h3>
+            <p className="text-sm text-slate-500 mt-1">
+              PDF, DOC, DOCX
             </p>
+
+            <label className="inline-block mt-4 px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer transition">
+              Choose File
+              <input
+                type="file"
+                ref={reportRef}
+                className="hidden"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFilePick}
+                multiple
+              />
+            </label>
           </div>
 
-          {/* UPLOAD SECTION */}
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-            <div className='border-2 border-dashed mt-5 border-slate-300 rounded-lg 
-            p-6 text-center hover:border-blue-400 transition-colors '>
-              <div className='mb-4'>
-                <FileText className='w-12 h-12 text-slate-400 mx-auto ' />
-              </div>
-              <h3 className='text-lg font-medium text-slate-800 mb-2'>Report</h3>
-              <p className='text-sm text-slate-600 mb-4'>Upload your project report(PDF,DOC)</p>
-              <label className='btn-outline cursor-pointer'>
-                Choose File
-                <input
-                  type="file"
-                  ref={reportRef}
-                  className='hidden' accept='.pdf,.doc,.docx '
-                  onChange={handleFilePick}
-                  multiple
-                />
-              </label>
-            </div>
+          {/* PRESENTATION */}
+          <div className="group border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
+            <Presentation className="w-12 h-12 text-slate-400 mx-auto group-hover:text-blue-500 transition" />
+            <h3 className="text-lg font-semibold mt-4 text-slate-800">Presentation</h3>
+            <p className="text-sm text-slate-500 mt-1">
+              PPT, PPTX, PDF
+            </p>
 
-
-            <div className='border-2 border-dashed mt-5 border-slate-300 rounded-lg 
-            p-6 text-center hover:border-blue-400 transition-colors '>
-              <div className='mb-4'>
-                <Presentation className='w-12 h-12 text-slate-400 mx-auto ' />
-              </div>
-              <h3 className='text-lg font-medium text-slate-800 mb-2'>Presentation</h3>
-              <p className='text-sm text-slate-600 mb-4'>Upload your project Presentation(PPT,PPTX,PDF)</p>
-              <label className='btn-outline cursor-pointer'>
-                Choose File
-                <input
-                  type="file"
-                  ref={presRef}
-                  className='hidden' accept='.pdf,.ppt,.pptx '
-                  onChange={handleFilePick}
-                  multiple
-                />
-              </label>
-            </div>
-
-            <div className='border-2 border-dashed mt-5 border-slate-300 rounded-lg 
-            p-6 text-center hover:border-blue-400 transition-colors '>
-              <div className='mb-4'>
-                <FileCodeCorner className='w-12 h-12 text-slate-400 mx-auto ' />
-              </div>
-              <h3 className='text-lg font-medium text-slate-800 mb-2'>Code Files</h3>
-              <p className='text-sm text-slate-600 mb-4'>Upload your project Source Code(ZIP,RAR)</p>
-              <label className='btn-outline cursor-pointer'>
-                Choose File
-                <input
-                  type="file"
-                  ref={codeRef}
-                  className='hidden' accept='.zip,.rar,.tar,.gz'
-                  onChange={handleFilePick}
-                  multiple
-                />
-              </label>
-            </div>
-
+            <label className="inline-block mt-4 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition">
+              Choose File
+              <input
+                type="file"
+                ref={presRef}
+                className="hidden"
+                accept=".pdf,.ppt,.pptx"
+                onChange={handleFilePick}
+                multiple
+              />
+            </label>
           </div>
 
-          
+          {/* CODE */}
+          <div className="group border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-amber-500 hover:bg-amber-50 transition-all duration-200">
+            <FileCodeCorner className="w-12 h-12 text-slate-400 mx-auto group-hover:text-amber-500 transition" />
+            <h3 className="text-lg font-semibold mt-4 text-slate-800">Source Code</h3>
+            <p className="text-sm text-slate-500 mt-1">
+              ZIP, RAR
+            </p>
+
+            <label className="inline-block mt-4 px-4 py-2 text-sm font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-700 cursor-pointer transition">
+              Choose File
+              <input
+                type="file"
+                ref={codeRef}
+                className="hidden"
+                accept=".zip,.rar,.tar,.gz"
+                onChange={handleFilePick}
+                multiple
+              />
+            </label>
+          </div>
+
+        </div>
+
+        {/* UPLOAD BUTTON */}
+        <div className="flex justify-end mt-8">
+          <button
+            onClick={handleUpload}
+            disabled={selectedFiles.length === 0}
+            className={`px-6 py-3 rounded-xl text-sm font-semibold text-white shadow-lg transition-all duration-200
+            ${selectedFiles.length === 0
+                ? "bg-slate-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 hover:shadow-xl active:scale-95"
+              }`}
+          >
+            Upload Selected Files
+          </button>
         </div>
       </div>
-    </>
-  )
+
+      {/* SELECTED FILE PREVIEW */}
+      {selectedFiles.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h2 className="text-lg font-semibold text-slate-800 mb-4">
+            Ready to Upload
+          </h2>
+
+          <div className="space-y-3">
+            {selectedFiles.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:shadow-sm transition"
+              >
+                <div className="flex items-center gap-4">
+                  {getFileIcon(file.name)}
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {(file.size / 1024).toFixed(2)} KB
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => removeSelected(file.name)}
+                  className="text-red-500 text-sm font-medium hover:text-red-600 transition"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* UPLOADED FILES LIST */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-slate-800">
+            Uploaded Files
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Manage your uploaded project files
+          </p>
+        </div>
+
+        {(files || []).length === 0 ? (
+          <div className="text-center py-12">
+            <Archive className="w-14 h-14 text-slate-300 mx-auto mb-4" />
+            <p className="text-slate-500 text-sm">
+              No files uploaded yet
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {files.map((file) => (
+              <div
+                key={file._id || file.fileUrl}
+                className="flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:shadow-sm transition"
+              >
+                {/* LEFT SIDE */}
+                <div className="flex items-center gap-4">
+                  {getFileIcon(file.originalName)}
+
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {file.originalName}
+                    </p>
+
+                    <p className="text-xs text-slate-500 mt-1">
+                      {file.fileType || "Project File"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* RIGHT SIDE */}
+                <div className="flex items-center gap-3">
+
+                  <a
+                    href={file.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 text-sm font-medium rounded-lg
+                         bg-indigo-600 text-white
+                         hover:bg-indigo-700
+                         transition-all duration-200"
+                  >
+                    Download
+                  </a>
+
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default UploadFiles 
