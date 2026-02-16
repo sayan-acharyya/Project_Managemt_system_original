@@ -7,6 +7,7 @@ import * as requestService from "../services/requestServices.js"
 import * as notificationService from "../services/notificationServices.js"
 import { Project } from "../models/Project.js";
 import { Notification } from "../models/notification.js";
+import * as fileServices from "../services/fileServices.js";
 
 export const getStudentProject = asyncHandler(async (req, res, next) => {
     const studentId = req.user._id;
@@ -203,3 +204,24 @@ export const getFeedback = asyncHandler(async (req, res, next) => {
         data: { feedback: sortedFeedback }
     })
 })
+
+export const downloadFile = asyncHandler(async (req, res, next) => {
+    const { projectId, fileId } = req.params;
+    const studentId = req.user._id;
+
+    const project = await projectServices.getProjectById(projectId);
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+    if (project.student.toString() !== studentId.toString()) {
+        return next(
+            new ErrorHandler("Not authorized to download files ", 403)
+        );
+    }
+    const file = project.files.id(fileId);
+    if (!file) {
+        return next(new ErrorHandler("File not found", 404));
+    }
+    fileServices.streamDownload(file.fileUrl, res, file.originalName);
+})
+

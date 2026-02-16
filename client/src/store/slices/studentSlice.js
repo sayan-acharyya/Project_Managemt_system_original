@@ -96,6 +96,20 @@ export const getFeedback = createAsyncThunk("getFeedback", async (projectId, thu
         return thunkAPI.rejectWithValue(error.response.data.message);
     }
 })
+///download/:projectId/:fileId
+export const downloadFile = createAsyncThunk("downloadFile", async ({ projectId, fileId }, thunkAPI) => {
+    try {
+        const res = await axiosInstance.get(`/student/download/${projectId}/${fileId}`, {
+            responseType: "blob"
+        })
+        return { blob: res.data, projectId, fileId }
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to download file")
+        return thunkAPI.rejectWithValue(error.response?.data?.message)
+    }
+})
+
+
 
 const studentSlice = createSlice({
     name: "student",

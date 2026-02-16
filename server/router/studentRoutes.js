@@ -2,6 +2,7 @@ import express from "express";
 import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js";
 import multer from "multer";
 import {
+    downloadFile,
     getAvailableSupervisors,
     getDashboardStats,
     getFeedback,
@@ -57,6 +58,13 @@ router.get(
     isAuthenticated,
     isAuthorized("Student"),
     getDashboardStats
+)
+ 
+router.get(
+    "/download/:projectId/:fileId",
+    isAuthenticated,
+    isAuthorized("Student"),
+    downloadFile
 )
 
 export default router;

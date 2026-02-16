@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchProject, uploadFiles } from '../../store/slices/studentSlice';
+import { downloadFile, fetchProject, uploadFiles } from '../../store/slices/studentSlice';
 const UploadFiles = () => {
   const dispatch = useDispatch();
   const { project, files } = useSelector(state => state.student);
@@ -69,6 +69,27 @@ const UploadFiles = () => {
     return <File className={`w-8 h-8 ${color}`} />;
   };
 
+  const handleDownloadFile = async (file) => {
+    if (!file.projectId || !file.fileId) {
+      return;
+    }
+    const res = await dispatch(downloadFile({ projectId: file.projectId, fileId: file.fileId }));
+
+    if (res.meta.requestStatus !== "fulfilled") {
+      return;
+    }
+
+    const url = URL.createObjectURL(res.payload.blob);
+
+    const a = Object.assign(document.createElement("a"), {
+      href: url,
+      download: file.name || "download"
+    });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  
   return (
     <div className="max-w-6xl mx-auto space-y-8">
 
@@ -246,17 +267,18 @@ const UploadFiles = () => {
                 {/* RIGHT SIDE */}
                 <div className="flex items-center gap-3">
 
-                  <a
-                    href={file.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    // href={file.fileUrl}
+                    // target="_blank"
+                    // rel="noopener noreferrer"
+                    onClick={()=>handleDownloadFile(file)}
                     className="px-4 py-2 text-sm font-medium rounded-lg
                          bg-indigo-600 text-white
                          hover:bg-indigo-700
                          transition-all duration-200"
                   >
                     Download
-                  </a>
+                  </button>
 
                 </div>
               </div>
