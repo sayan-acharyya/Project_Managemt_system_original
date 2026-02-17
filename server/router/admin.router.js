@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js";
-import { createStudent, createTeacher, deleteStudent, deleteTeacher, getAllUsers, updateStudent, updateTeacher } from "../Controllers/adminController.js";
+import { createStudent, createTeacher, deleteStudent, deleteTeacher, getAllProjects, getAllUsers, updateStudent, updateTeacher } from "../Controllers/adminController.js";
 
 const router = express.Router();
 
@@ -14,5 +14,7 @@ router.put("/update-teacher/:id", isAuthenticated, isAuthorized("Admin"), update
 router.delete("/delete-teacher/:id", isAuthenticated, isAuthorized("Admin"), deleteTeacher);
 
 router.get("/users", isAuthenticated, isAuthorized("Admin"), getAllUsers);
+router.get("/projects", isAuthenticated, isAuthorized("Admin"), getAllProjects);
+
 export default router;
 

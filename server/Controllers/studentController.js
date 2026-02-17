@@ -38,6 +38,9 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
     if (existingProject && existingProject.status !== "rejected") {
         return next(new ErrorHandler("You already have an active project.You submit a new Proposal when the previous one was rejected.", 400))
     }
+
+    
+
     const projectData = {
         student: studentId,
         title,

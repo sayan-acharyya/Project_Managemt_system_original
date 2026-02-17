@@ -27,7 +27,7 @@ const ManageStudents = () => {
     department: "",
   });
 
- 
+
   // Prepare student list with project info
   const students = useMemo(() => {
     const studentUsers = (users || []).filter(
@@ -36,7 +36,7 @@ const ManageStudents = () => {
 
     return studentUsers.map((student) => {
       const studentProject = (projects || []).find(
-        (p) => p.student?._id === student._id
+        (p) => p.student === student._id
       );
 
       return {
@@ -296,9 +296,7 @@ const ManageStudents = () => {
                               {
                                 student.supervisor ? (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-green-800 bg-green-100 text-xs font-medium ">
-                                    {
-                                      typeof student.supervisor === "object" ? student.supervisor.name || "--" : student.supervisor
-                                    }
+                                    {users?.find(u => u._id === student?.supervisor)?.name}
                                   </span>
                                 ) : (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-red-800 bg-red-100 text-xs font-medium ">
@@ -489,7 +487,7 @@ const ManageStudents = () => {
         }
 
         {
-          isCreateStudentModalOpen && <AddStudent/>
+          isCreateStudentModalOpen && <AddStudent />
         }
       </div>
     </div>

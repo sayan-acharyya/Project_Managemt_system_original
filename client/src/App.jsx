@@ -15,7 +15,7 @@ import ManageTeachers from './pages/admin/ManageTeachers'
 import AssignSupervisor from './pages/admin/AssignSupervisor'
 import DeadlinesPage from './pages/admin/DeadlinesPage'
 import ProjectsPage from './pages/admin/ProjectsPage'
-import { getAllUsers } from './store/slices/adminSlice'
+import { getAllProjects, getAllUsers } from './store/slices/adminSlice'
 import SubmitProposal from './pages/student/SubmitProposal'
 import UploadFiles from './pages/student/UploadFiles'
 import SupervisorPage from './pages/student/SupervisorPage'
@@ -35,6 +35,7 @@ const App = () => {
   useEffect(() => {
     if (authUser?.role === "Admin") {
       dispatch(getAllUsers());
+      dispatch(getAllProjects());
     }
   }, [authUser])
 
