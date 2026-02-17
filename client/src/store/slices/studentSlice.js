@@ -52,6 +52,7 @@ export const requestSupervisor = createAsyncThunk("requestSupervisor", async (da
     try {
         const res = await axiosInstance.post("/student/request-supervisor", data);
         thunkAPI.dispatch(getSupervisor())
+        toast.success("Request send successfully plese wait for the response.")
         return res.data.data?.request;
 
     } catch (error) {
@@ -96,7 +97,7 @@ export const getFeedback = createAsyncThunk("getFeedback", async (projectId, thu
         return thunkAPI.rejectWithValue(error.response.data.message);
     }
 })
-///download/:projectId/:fileId
+ 
 export const downloadFile = createAsyncThunk("downloadFile", async ({ projectId, fileId }, thunkAPI) => {
     try {
         const res = await axiosInstance.get(`/student/download/${projectId}/${fileId}`, {

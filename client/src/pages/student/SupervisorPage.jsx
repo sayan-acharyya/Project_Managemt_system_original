@@ -54,7 +54,7 @@ const SupervisorPage = () => {
 
     const message = requestMessage?.trim() || `${authUser.name || "Student"} has request ${selectedSupervisor.name} to be their supervisor`
     dispatch(requestSupervisor({ teacherId: selectedSupervisor._id, message }))
-
+       
   }
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 p-6">
@@ -348,7 +348,7 @@ const SupervisorPage = () => {
           </div>
         )}
 
-  
+
         {/* ================= REQUEST MODAL ================= */}
         {showRequestModel && selectedSupervisor && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
@@ -431,7 +431,7 @@ const SupervisorPage = () => {
               </div>
             </div>
           </div>
-        )}   
+        )}
       </div>
     </div>
   );

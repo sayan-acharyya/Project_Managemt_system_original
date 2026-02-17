@@ -39,7 +39,9 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("You already have an active project.You submit a new Proposal when the previous one was rejected.", 400))
     }
 
-    
+    if (existingProject && existingProject.status !== "rejected") {
+        await Project.findByIdAndDelete(existingProject._id)
+    }
 
     const projectData = {
         student: studentId,
@@ -62,7 +64,7 @@ export const uploadFiles = asyncHandler(async (req, res, next) => {
     const studentId = req.user._id;
     const project = await projectServices.getProjectById(projectId);
 
-    if (!project || project.student.toString() !== studentId.toString()) {
+    if (!project || project.student._id.toString() !== studentId.toString()) {
         return next(new ErrorHandler("Not authorized to upload files to this project", 403));
     }
     if (!req.files || req.files.length === 0) {
@@ -123,7 +125,7 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
     }
     const supervisor = await User.findById(teacherId);
 
-    if (!supervisor || !supervisor.role !== "Teacher") {
+    if (!supervisor || supervisor.role !== "Teacher") {
         return next(new ErrorHandler("Invalid supervisor selected", 400))
     }
 
