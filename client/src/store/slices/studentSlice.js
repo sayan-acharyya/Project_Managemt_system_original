@@ -97,7 +97,7 @@ export const getFeedback = createAsyncThunk("getFeedback", async (projectId, thu
         return thunkAPI.rejectWithValue(error.response.data.message);
     }
 })
- 
+
 export const downloadFile = createAsyncThunk("downloadFile", async ({ projectId, fileId }, thunkAPI) => {
     try {
         const res = await axiosInstance.get(`/student/download/${projectId}/${fileId}`, {
@@ -132,6 +132,7 @@ const studentSlice = createSlice({
         })
         builder.addCase(fetchProject.fulfilled, (state, action) => {
             state.project = action.payload?.project || action.payload || null;
+            state.files = action.payload?.files || []
         })
         builder.addCase(getSupervisor.fulfilled, (state, action) => {
             state.supervisor = action.payload?.supervisor || action.payload || null;
@@ -140,9 +141,9 @@ const studentSlice = createSlice({
             state.supervisors = action.payload?.supervisors || action.payload || [];
         })
         builder.addCase(uploadFiles.fulfilled, (state, action) => {
-            const newFiles = action.payload?.project?.files || action.payload || [];
-            state.files = [...state.files, ...newFiles]
-        })
+            state.project = action.payload?.project || action.payload;
+            state.files = state.project?.files || [];
+        });
         builder.addCase(getFeedback.fulfilled, (state, action) => {
             state.feedback = action.payload || [];
         })

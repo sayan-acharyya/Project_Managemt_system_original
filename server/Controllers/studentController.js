@@ -218,11 +218,11 @@ export const downloadFile = asyncHandler(async (req, res, next) => {
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
     }
-    if (project.student.toString() !== studentId.toString()) {
+    if (project.student._id.toString() !== studentId.toString()) {
         return next(
             new ErrorHandler("Not authorized to download files ", 403)
         );
-    }
+    } 
     const file = project.files.id(fileId);
     if (!file) {
         return next(new ErrorHandler("File not found", 404));

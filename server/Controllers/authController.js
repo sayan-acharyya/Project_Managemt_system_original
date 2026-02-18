@@ -33,17 +33,17 @@ export const login = asyncHandler(async (req, res, next) => {
 
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-        return next(new ErrorHandler("Invalid credentials e ", 401));
+        return next(new ErrorHandler("Invalid credentials  ", 401));
     }
 
     // ✅ Role check
     if (user.role !== role) {
-        return next(new ErrorHandler("Invalid credentials r", 401));
+        return next(new ErrorHandler("Invalid credentials ", 401));
     }
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
     if (!isPasswordMatched) {
-        return next(new ErrorHandler("Invalid credentials p", 401));
+        return next(new ErrorHandler("Invalid credentials ", 401));
     }
 
     generateToken(user, 200, "Logged in successfully", res);

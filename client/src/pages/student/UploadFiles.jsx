@@ -70,26 +70,25 @@ const UploadFiles = () => {
   };
 
   const handleDownloadFile = async (file) => {
-    if (!file.projectId || !file.fileId) {
-      return;
-    }
-    const res = await dispatch(downloadFile({ projectId: file.projectId, fileId: file.fileId }));
 
-    if (res.meta.requestStatus !== "fulfilled") {
-      return;
-    }
 
-    const url = URL.createObjectURL(res.payload.blob);
+    const res = await dispatch(
+      downloadFile({ projectId: project._id, fileId: file._id })
+    ).then(res => {
+      const { blob } = res.payload;
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", file.name || "download");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    })
 
-    const a = Object.assign(document.createElement("a"), {
-      href: url,
-      download: file.name || "download"
-    });
-    a.click();
-    URL.revokeObjectURL(url);
   }
 
-  
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
 
@@ -271,7 +270,7 @@ const UploadFiles = () => {
                     // href={file.fileUrl}
                     // target="_blank"
                     // rel="noopener noreferrer"
-                    onClick={()=>handleDownloadFile(file)}
+                    onClick={() => handleDownloadFile(file)}
                     className="px-4 py-2 text-sm font-medium rounded-lg
                          bg-indigo-600 text-white
                          hover:bg-indigo-700
