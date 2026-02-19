@@ -337,10 +337,10 @@ const StudentDashboard = () => {
                   </div>
 
                   <p className="mt-4 text-slate-600 font-medium">
-                    No notifications yet
+                    No notifications yet   
                   </p>
 
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-slate-400"> 
                     You're all updated 🎉
                   </p>
                 </div>
