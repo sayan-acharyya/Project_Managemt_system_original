@@ -319,7 +319,7 @@ const StudentDashboard = () => {
                         return (
                           <div
                             className='p-3 bg-slate-50 rounded-lg border border-slate-100'
-                            key={i}>
+                            key={i}>   
                             <p className='font-medium text-slate-800'>{n.message}</p>
                             <p className='text-xs text-slate-500 mt-1'>{formatDate(n.createdAt)}</p>
                           </div>
