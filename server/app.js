@@ -6,6 +6,7 @@ import { errorMiddleware } from "./middlewares/error.js";
 import userRouter from "./router/user.router.js";
 import adminRouter from "./router/admin.router.js";
 import studentRouter from "./router/studentRoutes.js";
+import NotificationRouter from "./router/notification.router.js"
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
@@ -36,7 +37,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/student", studentRouter);
-
+app.use("/api/v1/notification", NotificationRouter)
 
 app.use(errorMiddleware);
 export default app;
