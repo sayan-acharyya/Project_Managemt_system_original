@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
-import { AlertCircle, BadgeCheck, Calendar, CheckCircle2, ChevronDown, Clock, Clock5, MessageCircle, Settings, User } from 'lucide-react'
+import { AlertCircle, BadgeCheck, BellOff, Calendar, CheckCircle2, ChevronDown, Clock, Clock5, MessageCircle, Settings, User } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { deleteNotification, getNotifications, markAllAsRead, markAsRead } from '../../store/slices/notificationSlice';
 const NotificationsPage = () => {
 
@@ -220,8 +221,101 @@ const NotificationsPage = () => {
               })
             }
           </div>
+
+          {/* NOTIFICATION LIST */}
+          <div className='space-y-3'>
+            {
+              notifications.map(notification => {
+                return (
+                  <div
+                    className={`border-2 border-slate-200 rounded-lg p-4 transition-all duration-200 
+                      ${getPriorityColor(notification.priority)}  ${!notification.isRead ? "bg-blue-50" : "bg-white hover:bg-slate-50"}`}
+                    key={notification._id}>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex items-center justify-center shrink-0 mt-1">
+                        {getNotificationIcon(notification.type)}
+                      </div>
+
+
+                      <div className='flex min-w-0 '>
+                        <div className='flex items-center justify-between mb-2'>
+                          <h3 className={`font-medium ${!notification.isRead ? "text-slate-900" : "text-slate-700"}`}>
+                            {notification.title} {!notification.isRead && (<span className='ml-2 w-2 h-2 bg-blue-50 rounded-full inline-block ' />)}
+                          </h3>
+
+                          <div className='flex items-center space-x-2'>
+                            <span className='text-sm text-slate-500'>
+                              {formatDate(notification.createdAt)}
+                            </span>
+                            <span className={`badge capitalize ${notification.priority === "high" ?
+                              "badge-rejected"
+                              : notification.priority === "medium" ?
+                                "badge-pending" : "badge-approved"
+                              }`}>
+                              {notification.priority}
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className='text-slate-600 text-sm leading-relaxed mb-3'>
+                          {notification.message}
+                        </p>
+
+                        <div className='flex items-center justify-between'>
+                          <span className={`badge capitalize  ${notification.type === "feedback" ?
+                            "bg-blue-100 text-blue-800" : notification.type === "deadline" ?
+                              "bg-red-100 text-red-800" : notification.type === "approval" ?
+                                "bg-green-100 text-green-800" : notification.type === "meeting" ?
+                                  "bg-purple-100 text-purple-800" : "bg-gray-100 text-gray-800"}`}
+                          >
+                            {notification.type}
+                          </span>
+                          <div className='flex items-center space-x-2'>
+                            {!notification.isRead && (
+                              <button
+                                onClick={() => markAsReadHandler(notification._id)}
+                                className='text-sm text-blue-600 hover:text-blue-500'>
+                                Mark as read
+                              </button>
+                            )}
+                            <button
+                              onClick={() => deleteNotificationHandler(notification._id)}
+                              className='text-sm text-red-600 hover:text-red-500'>
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+
+          {
+            notifications.length === 0 && (
+              <>
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="h-16 w-16 flex items-center justify-center rounded-full bg-slate-100 text-2xl">
+                    <BellOff className='text-slate-600'/>
+                  </div>
+
+                  <p className="mt-4 text-slate-600 font-medium">
+                    No notifications yet   
+                  </p>
+
+                  <p className="text-sm text-slate-400"> 
+                    You're all updated 🎉
+                  </p>
+                </div>
+              </>
+            )
+          }
+
         </div>
-      </div>
+      </div >
     </>
   )
 }
