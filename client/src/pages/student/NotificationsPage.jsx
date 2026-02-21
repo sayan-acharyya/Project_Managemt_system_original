@@ -87,8 +87,8 @@ const NotificationsPage = () => {
     }
   };
 
-  
-const stats = [
+
+  const stats = [
     {
       title: "Total",
       value: notifications.length,
@@ -141,8 +141,87 @@ const stats = [
 
 
   return (
-    <> 
-    
+    <>
+      <div className="space-y-6">
+        <div className="card">
+
+          {/* CARD HEADER */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-800 mt-2">
+                Notifications 🔔
+              </h2>
+              <p className="text-xs text-slate-500  ">
+                stay updated with your project progress and deadlines
+              </p>
+            </div>
+            {unreadCount > 0 && (
+              <button
+                onClick={markAllAsReadHandler}
+                className="
+      group relative flex items-center gap-2.5 px-4 py-2 
+      text-sm font-semibold tracking-tight
+      text-slate-700 bg-white border border-slate-200 
+      rounded-lg shadow-sm
+      hover:bg-slate-50 hover:border-blue-300 hover:text-blue-700
+      active:bg-blue-100 active:scale-[0.97]
+      focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-1
+      transition-all duration-200 ease-out
+    "
+              >
+                {/* Animated Icon Container */}
+                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+
+                <span>Mark all as read</span>
+
+                {/* Professional Badge Design */}
+                <div className="flex items-center justify-center px-2 py-0.5 min-w-[24px] text-[11px] font-bold bg-blue-100 text-blue-700 rounded-full border border-blue-200">
+                  {unreadCount}
+                </div>
+              </button>
+            )}
+
+          </div>
+
+          {/* NOTIFICATION STATES */}
+          <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 mt-5'>
+            {
+              stats.map((item, i) => {
+                return (
+                  <div
+                    key={i}
+                    className={`${item.bg} rounded-lg p-4 `}>
+                    <div className='flex items-center '>
+                      <div className={`p-2 ${item.iconBg} rounded-lg `}>
+                        <item.Icon className={`w-5 h-5 ${item.textColor} `} />
+                      </div>
+
+                      <div className='ml-3'>
+                        <p className={`text-sm font-medium ${item.titleColor}`}>
+                          {item.title}
+                        </p>
+                        <p className={`text-sm font-medium ${item.valueColor}`}>
+                          {item.value}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+        </div>
+      </div>
     </>
   )
 }
