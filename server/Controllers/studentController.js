@@ -8,6 +8,8 @@ import * as notificationService from "../services/notificationServices.js"
 import { Project } from "../models/Project.js";
 import { Notification } from "../models/notification.js";
 import * as fileServices from "../services/fileServices.js";
+import { title } from "process";
+import { type } from "os";
 
 export const getStudentProject = asyncHandler(async (req, res, next) => {
     const studentId = req.user._id;
@@ -198,11 +200,19 @@ export const getFeedback = asyncHandler(async (req, res, next) => {
 
     const project = await projectServices.getProjectById(projectId);
 
-    if (!project || project.student.toString() !== studentId.toString()) {
+    if (!project || project.student._id.toString() !== studentId.toString()) {
         return next(new ErrorHandler("Not authorized to view feedback for this project", 403));
     }
 
-    const sortedFeedback = project.feedback.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sortedFeedback = project.feedback.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((f) => ({
+        _id: f._id,
+        title: f.title,
+        message: f.message,
+        type: f.type,
+        createdAt: f.createdAt,
+        supervisorName: f.supervisorId?.name,
+        supervisorEmail: f.supervisorId?.email,
+    }))
 
     res.status(200).json({
         success: true,
@@ -222,7 +232,7 @@ export const downloadFile = asyncHandler(async (req, res, next) => {
         return next(
             new ErrorHandler("Not authorized to download files ", 403)
         );
-    } 
+    }
     const file = project.files.id(fileId);
     if (!file) {
         return next(new ErrorHandler("File not found", 404));
