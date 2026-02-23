@@ -44,6 +44,11 @@ export const addFilesToProject = async (projectId, files) => {
 }
 
 export const getAllProjects = async () => {
-      const projects = await Project.find();
-      return projects;
+    const projects = await Project.find()
+        .populate("student", "name email")
+        .populate("supervisor", "name email")
+        .sort({ createdAt: -1 });
+
+        
+    return projects;
 }

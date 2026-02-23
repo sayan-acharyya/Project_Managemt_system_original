@@ -36,13 +36,13 @@ const ManageStudents = () => {
 
     return studentUsers.map((student) => {
       const studentProject = (projects || []).find(
-        (p) => p.student === student._id
+        (p) => p.student?._id?.toString() === student._id?.toString()
       );
 
       return {
         ...student,
         projectTitle: studentProject?.title || null,
-        supervisor: studentProject?.supervisor || null,
+        supervisorName: studentProject?.supervisor?.name || null,
         projectStatus: studentProject?.status || null,
       };
     });
@@ -293,22 +293,16 @@ const ManageStudents = () => {
                             </td>
 
                             <td className="px-6 py-4 whitespace-nowrap">
-                              {
-                                student.supervisor ? (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-green-800 bg-green-100 text-xs font-medium ">
-                                    {users?.find(u => u._id === student?.supervisor)?.name}
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-red-800 bg-red-100 text-xs font-medium ">
-                                    {
-                                      student.projectStatus === "rejected" ? "Rejected" : "Not Assigned"
-                                    }
-
-                                  </span>
-                                )
-                              }
+                              {student.supervisorName ? (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-green-800 bg-green-100 text-xs font-medium">
+                                  {student.supervisorName}
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-red-800 bg-red-100 text-xs font-medium">
+                                  {student.projectStatus === "rejected" ? "Rejected" : "Not Assigned"}
+                                </span>
+                              )}
                             </td>
-
                             <td className="px-6 py-4">
                               <div className="text-sm text-slate-900 ">
                                 {student.projectTitle}
