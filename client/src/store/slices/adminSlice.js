@@ -89,6 +89,17 @@ export const getAllProjects = createAsyncThunk("getAllProjects", async (_, thunk
 })
 
 
+export const getDashboardStates = createAsyncThunk("getDashboardStates", async (_, thunkAPI) => {
+    try {
+        const res = await axiosInstance.get("/fetch-dashboard-stats");
+        return res.data.data.stats;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to fetch admin dashboard states");
+        return thunkAPI.rejectWithValue(error.response?.data?.message);
+    }
+})
+
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {
@@ -134,6 +145,9 @@ const adminSlice = createSlice({
             })
             .addCase(getAllProjects.fulfilled, (state, action) => {
                 state.projects = action.payload.projects;
+            })
+            .addCase(getDashboardStates.fulfilled, (state, action) => {
+                state.stats = action.payload;
             })
 
     },
