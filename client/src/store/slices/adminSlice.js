@@ -91,7 +91,7 @@ export const getAllProjects = createAsyncThunk("getAllProjects", async (_, thunk
 
 export const getDashboardStates = createAsyncThunk("getDashboardStates", async (_, thunkAPI) => {
     try {
-        const res = await axiosInstance.get("/fetch-dashboard-stats");
+        const res = await axiosInstance.get("/admin/fetch-dashboard-stats");
         return res.data.data.stats;
     } catch (error) {
         toast.error(error.response?.data?.message || "Failed to fetch admin dashboard states");
