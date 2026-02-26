@@ -293,7 +293,7 @@ const AdminDashboard = () => {
                         {item.title}
                       </p>
                       <p className={`text-sm font-medium text-slate-800`}>
-                        {item.value}
+                        {item.value}  
                       </p>
                     </div>
                   </div>
