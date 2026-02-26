@@ -285,7 +285,7 @@ const AdminDashboard = () => {
                   className={`${item.bg} rounded-lg p-4 `}>
                   <div className='flex items-center '>
                     <div className={`p-2 ${item.iconBg} rounded-lg `}>
-                      <item.Icon className={`w-6 h-6 ${item.iconColor}`}/>
+                      <item.Icon className={`w-6 h-6 ${item.iconColor}`} />
                     </div>
 
                     <div className='ml-3'>
@@ -293,7 +293,7 @@ const AdminDashboard = () => {
                         {item.title}
                       </p>
                       <p className={`text-sm font-medium text-slate-800`}>
-                        {item.value}  
+                        {item.value}
                       </p>
                     </div>
                   </div>
@@ -301,6 +301,87 @@ const AdminDashboard = () => {
               )
             })
           }
+        </div>
+
+        {/* CHARTS & ACTIVITY */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* vertical Bar Chart */}
+          <div className="lg:col-span-2 card">
+            <div className="card-header">
+              <h3>
+                Project Distribution by supervisor
+              </h3>
+            </div>
+            <div className="p-4">
+              {
+                supervisorsBucket.length === 0 ? (
+                  <div className="h-64 flex items-center justify-center bg-slate-50 rounded text-slate-500">
+                    No data
+                  </div>
+                ) : (
+                  <div className="h-72">
+                    <ResponsiveContainer width={"100%"} height={"100%"}>
+                      <BarChart
+                        data={supervisorsBucket}
+                        margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
+                        barCategoryGap={"20%"}
+                      >
+                        <CartesianGrid s
+                          trokeDasharray="3 3"
+                          stroke="#E2E8F0" />
+                        <XAxis
+                          dataKey={"name"}
+                          tick={{ fontSize: 12, fill: "#334155" }}
+                          axisLine={{ stroke: "#CBD5E1" }}
+                          tickLine={{ stroke: "#CBD5E1" }}
+                          interval={0}
+                          height={50}
+                          dy={10}
+                        />
+                        <YAxis
+                          allowDecimals={false}
+                          tick={{ fontSize: 12, fill: "#334155" }}
+                          axisLine={{ stroke: "#CBD5E1" }}
+                          tickLine={{ stroke: "#CBD5E1" }}
+                        />
+                        <Tooltip
+                          cursor={{ fill: "rgba(99,102,241,0.05)" }}
+                          contentStyle={{
+                            borderRadius: 8,
+                            borderColor: "#E2E8F0"
+                          }}
+                          formatter={(value, name) => [
+                            value,
+                            name === "count" ? "Project Assigned" : name
+                          ]}
+                          labelFormatter={(label) => `Supervisor: ${label}`}
+                        />
+                        <Bar dataKey="count" radius={[8, 8, 0, 0]} >
+                          {
+                            supervisorsBucket.map((entry, index) => {
+                              const colors = [
+                                "#1E3A8A",
+                                "#2563EB",
+                                "#3B82F6",
+                                "60A5FA",
+                                "#93C5FD"
+                              ]
+
+                              return (
+                                <Cell 
+                                fill={colors[index % colors.length]}
+                                key={`cell-${index}`} />
+                              )
+                            })
+                          }
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )
+              }
+            </div>
+          </div>
         </div>
       </div>
     </>
