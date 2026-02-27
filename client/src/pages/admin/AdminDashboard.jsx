@@ -304,85 +304,154 @@ const AdminDashboard = () => {
         </div>
 
         {/* CHARTS & ACTIVITY */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* vertical Bar Chart */}
-          <div className="lg:col-span-2 card">
-            <div className="card-header">
-              <h3>
-                Project Distribution by supervisor
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          {/* ===================== CHART CARD ===================== */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-slate-100">
+              <h3 className="text-lg font-semibold text-slate-800">
+                Project Distribution by Supervisor
+              </h3>
+               
+            </div>
+
+            {/* Body */}
+            <div className="p-6">
+              {supervisorsBucket.length === 0 ? (
+                <div className="h-64 flex flex-col items-center justify-center bg-slate-50 rounded-xl border border-dashed border-slate-300 text-slate-400">
+                  <Folder className="w-10 h-10 mb-3 opacity-40" />
+                  <p>No supervisor data available</p>
+                </div>
+              ) : (
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={supervisorsBucket}
+                      margin={{ top: 10, right: 20, bottom: 20, left: 0 }}
+                      barCategoryGap="25%"
+                    >
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="#E2E8F0"
+                      />
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 12, fill: "#475569" }}
+                        axisLine={{ stroke: "#CBD5E1" }}
+                        tickLine={false}
+                        interval={0}
+                        angle={-15}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis
+                        allowDecimals={false}
+                        tick={{ fontSize: 12, fill: "#475569" }}
+                        axisLine={{ stroke: "#CBD5E1" }}
+                        tickLine={false}
+                      />
+                      <Tooltip
+                        cursor={{ fill: "rgba(99,102,241,0.08)" }}
+                        contentStyle={{
+                          borderRadius: "12px",
+                          border: "1px solid #E2E8F0",
+                          boxShadow: "0 10px 25px rgba(0,0,0,0.05)"
+                        }}
+                        formatter={(value) => [`${value}`, "Projects Assigned"]}
+                        labelFormatter={(label) => `Supervisor: ${label}`}
+                      />
+                      <Bar
+                        dataKey="count"
+                        radius={[10, 10, 0, 0]}
+                      >
+                        {supervisorsBucket.map((_, index) => {
+                          const colors = [
+                            "#4F46E5",
+                            "#6366F1",
+                            "#8B5CF6",
+                            "#A855F7",
+                            "#C084FC"
+                          ];
+                          return (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={colors[index % colors.length]}
+                            />
+                          );
+                        })}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ===================== RECENT ACTIVITY CARD ===================== */}
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+
+            {/* Header */}
+            <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-100">
+              <h3 className="text-lg font-semibold text-slate-800">
+                Recent Activity
               </h3>
             </div>
-            <div className="p-4">
-              {
-                supervisorsBucket.length === 0 ? (
-                  <div className="h-64 flex items-center justify-center bg-slate-50 rounded text-slate-500">
-                    No data
-                  </div>
-                ) : (
-                  <div className="h-72">
-                    <ResponsiveContainer width={"100%"} height={"100%"}>
-                      <BarChart
-                        data={supervisorsBucket}
-                        margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
-                        barCategoryGap={"20%"}
-                      >
-                        <CartesianGrid s
-                          trokeDasharray="3 3"
-                          stroke="#E2E8F0" />
-                        <XAxis
-                          dataKey={"name"}
-                          tick={{ fontSize: 12, fill: "#334155" }}
-                          axisLine={{ stroke: "#CBD5E1" }}
-                          tickLine={{ stroke: "#CBD5E1" }}
-                          interval={0}
-                          height={50}
-                          dy={10}
-                        />
-                        <YAxis
-                          allowDecimals={false}
-                          tick={{ fontSize: 12, fill: "#334155" }}
-                          axisLine={{ stroke: "#CBD5E1" }}
-                          tickLine={{ stroke: "#CBD5E1" }}
-                        />
-                        <Tooltip
-                          cursor={{ fill: "rgba(99,102,241,0.05)" }}
-                          contentStyle={{
-                            borderRadius: 8,
-                            borderColor: "#E2E8F0"
-                          }}
-                          formatter={(value, name) => [
-                            value,
-                            name === "count" ? "Project Assigned" : name
-                          ]}
-                          labelFormatter={(label) => `Supervisor: ${label}`}
-                        />
-                        <Bar dataKey="count" radius={[8, 8, 0, 0]} >
-                          {
-                            supervisorsBucket.map((entry, index) => {
-                              const colors = [
-                                "#1E3A8A",
-                                "#2563EB",
-                                "#3B82F6",
-                                "60A5FA",
-                                "#93C5FD"
-                              ]
 
-                              return (
-                                <Cell 
-                                fill={colors[index % colors.length]}
-                                key={`cell-${index}`} />
-                              )
-                            })
-                          }
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+            {/* Body */}
+            <div className="p-6 space-y-4 max-h-[420px] overflow-y-auto">
+
+              {latestNotifications.length === 0 && (
+                <div className="text-center text-slate-400 text-sm py-10">
+                  No recent notifications
+                </div>
+              )}
+
+              {latestNotifications.map((n) => (
+                <div
+                  key={n._id}
+                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition"
+                >
+                  <div
+                    className={`mt-1 w-2.5 h-2.5 rounded-full ${getBulletColor(
+                      n.type,
+                      n.priority
+                    )}`}
+                  />
+
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-700 leading-snug">
+                      {n.message}
+                    </p>
+
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <span
+                        className={`px-2.5 py-0.5 text-xs rounded-full font-medium ${getBadgeClasses(
+                          "type",
+                          n.type
+                        )}`}
+                      >
+                        {n.type}
+                      </span>
+
+                      <span
+                        className={`px-2.5 py-0.5 text-xs rounded-full font-medium ${getBadgeClasses(
+                          "priority",
+                          n.priority
+                        )}`}
+                      >
+                        {n.priority}
+                      </span>
+                    </div>
                   </div>
-                )
-              }
+                </div>
+              ))}
             </div>
           </div>
         </div>
+
+        
       </div>
     </>
   )
