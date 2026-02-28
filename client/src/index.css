@@ -9,7 +9,7 @@
 
   /* Card header */
   .card-header {
-    @apply bg-gradient-to-r from-indigo-500 to-indigo-400 text-white font-semibold text-lg px-4 py-2 rounded-t-xl border-b border-white/20;
+    @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold text-lg px-4 py-2 rounded-t-xl border-b border-white/20;
   }
 
   /* Card body */
