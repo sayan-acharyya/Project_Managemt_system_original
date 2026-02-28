@@ -75,7 +75,7 @@ const projectSchema = new mongoose.Schema({
     ],
     feedback: [
         feedbackSchema
-    ],
+    ], 
     deadline: {
         type: Date,
     }
