@@ -7,7 +7,7 @@ export const downloadProjectFiles = createAsyncThunk(
     "downloadProjectFiles",
     async ({ projectId, fileId }, thunkAPI) => {
         try {
-            const res = await axiosInstance.get(`/${projectId}/files/${fileId}/download`,
+            const res = await axiosInstance.get(`/project/${projectId}/files/${fileId}/download`,
                 { responseType: "blob" }
             );
 

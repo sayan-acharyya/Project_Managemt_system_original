@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { getAllProjects, getDashboardStates } from "../../store/slices/adminSlice";
 import { getNotifications } from "../../store/slices/notificationSlice";
 import { downloadProjectFiles } from "../../store/slices/projectSlice";
-import { AlertCircle, AlertTriangle, Box, CheckCircle, FileTextIcon, Folder, PlusIcon, User, Users } from "lucide-react";
+import { AlertCircle, AlertTriangle, Box, CheckCircle, FileTextIcon, Folder, PlusIcon, User, Users, X } from "lucide-react";
 import { toggleStudentModel, toggleTeacherModel } from "../../store/slices/popupSlice";
 
 
@@ -24,8 +24,8 @@ const AdminDashboard = () => {
 
   const { isCreateStudentModalOpen, isCreateTeacherModalOpen } = useSelector(state => state.popup);
 
-  const { stats } = useSelector(state => state.admin);
-  const { projects } = useSelector(state => state.project);
+  const { stats, projects } = useSelector(state => state.admin);
+  // const { } = useSelector(state => state.project);
   const { notifications } = useSelector(state => state.notification.list);
 
 
@@ -54,6 +54,7 @@ const AdminDashboard = () => {
   const files = useMemo(() => {
     return (projects || []).flatMap(p => (p.files || []).map(f => ({
       projectId: p._id,
+      fileId: f._id,
       originalName: f.originalName,
       uploadedAt: f.uploadedAt,
       projectTitle: p.title,
@@ -61,6 +62,10 @@ const AdminDashboard = () => {
 
     })))
   }, [projects])
+
+
+
+
 
   const filteredFiles = files.filter((f) =>
     (f.originalName || "").toLowerCase().includes(reportSearch.toLowerCase()) ||
@@ -74,7 +79,7 @@ const AdminDashboard = () => {
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", file.name || "download");
+      link.setAttribute("download", name || "download");
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
@@ -314,7 +319,7 @@ const AdminDashboard = () => {
               <h3 className="text-lg font-semibold text-slate-800">
                 Project Distribution by Supervisor
               </h3>
-               
+
             </div>
 
             {/* Body */}
@@ -451,7 +456,189 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        
+        {/* QUICK ACTIONS */}
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+
+          {/* Header */}
+          <div className="relative px-6 py-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-slate-100">
+
+            {/* Soft glow */}
+            <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
+
+            <div className="relative flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-800 tracking-wide">
+                Quick Actions
+              </h3>
+              <span className="text-xs font-medium text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full">
+                Admin Controls
+              </span>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+            {actionButtons.map((btn, index) => (
+              <button
+                key={index}
+                onClick={btn.onClick}
+                className="
+          group relative flex items-center justify-center gap-2
+          px-5 py-3 rounded-xl font-medium text-sm
+          transition-all duration-300
+          bg-gradient-to-r from-indigo-500 to-purple-500
+          text-white shadow-md
+          hover:shadow-xl hover:scale-[1.03]
+          active:scale-95
+        "
+              >
+                {/* Icon */}
+                <btn.Icon className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6" />
+
+                {/* Label */}
+                <span>{btn.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {
+          isReportsModelOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+              {/* Backdrop */}
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+                onClick={() => setIsReportsModelOpen(false)}
+              />
+
+              {/* Modal */}
+              <div className="
+        relative w-full max-w-4xl mx-4
+        bg-white rounded-2xl shadow-2xl
+        border border-slate-100
+        overflow-hidden
+        animate-[fadeIn_.25s_ease-out]
+      ">
+
+                {/* Header */}
+                <div className="relative px-6 py-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-slate-100">
+
+                  {/* Soft Glow */}
+                  <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
+
+                  <div className="relative flex items-center justify-between">
+                    <h3 className="text-xl font-semibold text-slate-800 tracking-wide">
+                      All Files
+                    </h3>
+
+                    <button
+                      onClick={() => setIsReportsModelOpen(false)}
+                      className="
+                p-2 rounded-lg
+                text-slate-400 hover:text-slate-700
+                hover:bg-white/60
+                transition-all duration-200
+              "
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+
+                {/* Body */}
+                <div className="p-6 max-h-[70vh] overflow-y-auto bg-gradient-to-b from-slate-50 to-white">
+
+                  {/* Search Section */}
+                  <div className="mb-6">
+                    <div className="relative group">
+
+                      {/* Search Icon */}
+                      <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                        <svg
+                          className="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M21 21l-4.35-4.35m1.6-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+                          />
+                        </svg>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={reportSearch}
+                        onChange={(e) => setReportSearch(e.target.value)}
+                        placeholder="Search by file name, project title, or student name..."
+                        className="
+          w-full pl-11 pr-4 py-3
+          rounded-xl border border-slate-200
+          bg-white text-sm text-slate-700
+          shadow-sm
+          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+          transition-all duration-200
+        "
+                      />
+                    </div>
+
+                    {/* Small helper text */}
+                    <p className="text-xs text-slate-400 mt-2">
+                      Quickly find uploaded reports by name or related project.
+                    </p>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-slate-200 pt-6">
+
+                    {/* Empty state example */}
+                    {filteredFiles.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+                        <FileTextIcon className="w-10 h-10 mb-3 opacity-40" />
+                        <p className="text-sm">No matching files found</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {filteredFiles.map((f, i) => {
+                          return (
+                            <div
+                              key={i}
+                              className="flex items-center justify-between p-3 bg-slate-50 rounded"
+                            >
+                              <div>
+                                <div className="font-medium text-slate-800 ">
+                                  {f.originalName}
+                                </div>
+                                <div className="text-sm text-slate-500">
+                                  {f.projectTitle} - {f.studentName}
+                                </div>
+                              </div>
+
+                              <button
+                                onClick={() => handleDownload(f.projectId, f.fileId, f.originalName)}
+                                className="btn-outline btn-small bg-blue-600 rounded-lg px-2 py-1 text-white">Download </button>
+                            </div>
+                          )
+                        })}
+                      </div>
+
+                    )}
+
+                  </div>
+                </div>
+
+
+
+              </div>
+            </div>
+          )
+        }
+        {isCreateStudentModalOpen && <AddStudent />}
+        {isCreateTeacherModalOpen && <AddTeacher />}
       </div>
     </>
   )
