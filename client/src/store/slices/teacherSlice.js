@@ -1,7 +1,9 @@
- 
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
+
+
 
 const teacherSlice = createSlice({
   name: "teacher",
@@ -14,7 +16,7 @@ const teacherSlice = createSlice({
     error: null,
   },
   reducers: {},
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => { },
 });
 
 export default teacherSlice.reducer;

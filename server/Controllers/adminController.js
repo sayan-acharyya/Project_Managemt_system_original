@@ -4,7 +4,8 @@ import { User } from "../models/user.model.js";
 import { Project } from "../models/Project.js";
 import { SupervisorRequest } from "../models/supervisorRequest.js"
 import * as userServices from "../services/userServices.js";
-import * as projectServices from "../services/projectServices.js"
+import * as projectServices from "../services/projectServices.js";
+import * as notificationService from "../services/notificationServices.js";
 import bcrypt from "bcrypt";
 
 export const createStudent = asyncHandler(async (req, res, next) => {
@@ -155,8 +156,55 @@ export const getAllProjects = asyncHandler(async (req, res, next) => {
     });
 });
 
-export const assignSuppervisor = asyncHandler(async (req, res, next) => {
+export const assignSupervisor = asyncHandler(async (req, res, next) => {
+    const { studentId, supervisorId } = req.body;
 
+    if (!studentId || !supervisorId) {
+        return next(new ErrorHandler("studentId and supervisorId are required", 400))
+    }
+
+    const project = await Project.findOne({ student: studentId });
+
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404))
+    }
+
+    if (project.supervisor !== null) {
+        return next(new ErrorHandler("Supervisor already assigned", 400))
+    }
+
+    if (project.status !== 'approved') {
+        return next(new ErrorHandler("Project not approved yet", 400))
+    } else if (project.status === 'pending' || project.status === 'rejected') {
+        return next(new ErrorHandler("Project is in pending state or rejected", 400))
+    }
+
+    const { student, supervisor } = await userServices.assignSupervisorDirectly(studentId, supervisorId);
+
+    project.supervisor = supervisor;
+    await project.save();
+
+    await notificationService.notifyUser(
+        studentId,
+        `Yor have been assigned a supervisor ${supervisor.name}`,
+        "approval",
+        "/student/status",
+        "medium"
+    );
+
+    await notificationService.notifyUser(
+        supervisorId,
+        `The student ${student.name} has been officially assigned to you for supervision.`,
+        "general",
+        "/teacher/status",
+        "medium"
+    );
+
+    res.status(200).json({
+        success: true,
+        message: "Supervisor assigned successfully",
+        data: { student, supervisor }
+    })
 })
 
 export const getDashboardStates = asyncHandler(async (req, res, next) => {
@@ -191,3 +239,5 @@ export const getDashboardStates = asyncHandler(async (req, res, next) => {
         }
     })
 })
+
+
