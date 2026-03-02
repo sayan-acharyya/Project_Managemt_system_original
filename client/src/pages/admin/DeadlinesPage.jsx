@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createDeadline } from '../../store/slices/deadlineSlice';
-import { CalendarMinus2, Search, X } from 'lucide-react';
+import { BadgeCheck, CalendarMinus2, CheckCircle2, Clock, Search, X, XCircle } from 'lucide-react';
 
 const DeadlinesPage = () => {
 
@@ -31,6 +31,7 @@ const DeadlinesPage = () => {
     return (viewProjects || []).map((p) => ({
       _id: p._id,
       title: p.title,
+      status: p.status,
       studentName: p.student?.name || "-",
       studentEmail: p.student?.email || "-",
       studentDept: p.student?.department || "-",
@@ -186,7 +187,10 @@ const DeadlinesPage = () => {
                     Deadline
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider'>
-                    Updated
+                    Project Status
+                  </th>
+                  <th className='px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider'>
+                    Updated At
                   </th>
                 </tr>
               </thead>
@@ -224,27 +228,73 @@ const DeadlinesPage = () => {
                               </span>
                             )}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           {row.deadline !== "-" ? (
-                            <div className="flex items-center gap-2">
-                              <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                                {new Date(row.deadline).toLocaleDateString()}
-                              </span>
-                            </div>
+                            new Date(row.deadline) < new Date() ? (
+                              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-medium border border-red-100">
+                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                {row.deadline}
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium border border-emerald-100">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                {row.deadline}
+                              </div>
+                            )
                           ) : (
-                            <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Not set yet</span>
+                            <div className="inline-flex items-center  px-3 py-1 rounded-full bg-gray-200 text-blue-600 text-xs font-medium border border-slate-200">
+                              Not Set yet
+                            </div>
                           )}
                         </td>
 
-                        <td className="px-6 py-4">
-                          {row.updatedAt ? (
-                            <span className="text-sm text-slate-600">
-                              {new Date(row.updatedAt).toLocaleString()}
-                            </span>
-                          ) : (
-                            <span className="text-slate-400">-</span>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {row.status === "pending" && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold border border-yellow-200">
+                              <Clock className="w-3.5 h-3.5" />
+                              Pending
+                            </div>
+                          )}
+
+                          {row.status === "approved" && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200">
+                              <BadgeCheck className="w-3.5 h-3.5" />
+                              Approved
+                            </div>
+                          )}
+
+                          {row.status === "rejected" && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold border border-red-200">
+                              <XCircle className="w-3.5 h-3.5" />
+                              Rejected
+                            </div>
+                          )}
+
+                          {row.status === "completed" && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-200">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Completed
+                            </div>
                           )}
                         </td>
+
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {row.updatedAt && !isNaN(new Date(row.updatedAt)) ? (
+                            <div className="flex flex-col">
+                              <span className="text-sm font-semibold text-slate-800">
+                                {new Date(row.updatedAt).toLocaleDateString()}
+                              </span>
+                              <span className="text-xs text-slate-400">
+                                {new Date(row.updatedAt).toLocaleTimeString()}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic text-sm">
+                              Not Updated
+                            </span>
+                          )}
+                        </td>
+
                       </tr>
                     )
                   })
