@@ -16,7 +16,7 @@ const supervisorRequestSchema = new mongoose.Schema({
         required: [true, "message is required"],
         trim: true,
         maxlength: [250, "Message can't be more then 250 characters"]
-    },
+    }, 
     status: {
         type: String,
         default: "pending",

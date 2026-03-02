@@ -6,4 +6,4 @@
    )
  }
  
- export default AssignedStudents
+ export default AssignedStudents 

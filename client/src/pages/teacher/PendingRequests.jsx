@@ -6,4 +6,4 @@
    )
  }
  
- export default PendingRequests
+ export default PendingRequests  

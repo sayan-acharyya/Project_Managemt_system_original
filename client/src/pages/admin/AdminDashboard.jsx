@@ -261,24 +261,39 @@ const AdminDashboard = () => {
       <div className="space-y-6">
         {/* HEADER */}
         <div className="relative overflow-hidden rounded-3xl 
-      bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 
-      p-10 text-white shadow-2xl">
+  bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 
+  p-10 text-white shadow-2xl">
 
-          {/* Soft Glow Effects */}
-          <div className="absolute -top-12 -right-12 w-52 h-52 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-12 -left-12 w-52 h-52 bg-black/10 rounded-full blur-3xl"></div>
+  {/* Soft Glow Effects */}
+  <div className="absolute -top-12 -right-12 w-52 h-52 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-12 -left-12 w-52 h-52 bg-black/10 rounded-full blur-3xl"></div>
 
-          <div className="relative z-10">
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-              Admin Control Panel
-            </h1>
+  <div className="relative z-10 flex items-center justify-between">
 
-            <p className="mt-4 text-indigo-100 text-lg max-w-2xl">
-              Monitor system performance, manage users, and control project workflows
-              from one powerful dashboard.
-            </p>
-          </div>
-        </div>
+    {/* Left Content */}
+    <div>
+      <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+        Admin Control Panel
+      </h1>
+
+      <p className="mt-4 text-indigo-100 text-lg max-w-2xl">
+        Monitor system performance, manage users, and control project workflows
+        from one powerful dashboard.
+      </p>
+    </div>
+
+    {/* Right Badge */}
+    <div className="hidden md:flex items-center">
+      <span className="px-5 py-2 text-sm font-semibold 
+        bg-white/20 backdrop-blur-md 
+        border border-white/30 
+        rounded-full shadow-lg tracking-wide">
+        ADMIN PANEL
+      </span>
+    </div>
+
+  </div>
+</div>
 
         {/* STATES CARDS */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6  '>

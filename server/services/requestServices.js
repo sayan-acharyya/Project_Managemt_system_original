@@ -15,3 +15,8 @@ export const createRequest = async (requestData) => {
     const request = await SupervisorRequest.create(requestData);
     return await request.save();
 }
+
+export const getAllRequests = async (filters) => {
+
+}
+ 

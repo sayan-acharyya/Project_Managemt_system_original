@@ -22,6 +22,10 @@ import SupervisorPage from './pages/student/SupervisorPage'
 import FeedbackPage from './pages/student/FeedbackPage'
 import NotificationsPage from './pages/student/NotificationsPage'
 import StudentDashboard from './pages/student/StudentDashboard'
+import TeacherDashboard from './pages/teacher/TeacherDashboard'
+import PendingRequests from './pages/teacher/PendingRequests'
+import AssignedStudents from './pages/teacher/AssignedStudents'
+import TeacherFiles from './pages/teacher/TeacherFiles'
 
 const App = () => {
 
@@ -69,7 +73,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         {/* Auth Routes */}
-         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/reset-password' element={<ResetPasswordPage />} />
@@ -89,6 +93,23 @@ const App = () => {
           <Route path='assign-supervisor' element={<AssignSupervisor />} />
           <Route path='deadlines' element={<DeadlinesPage />} />
           <Route path='projects' element={<ProjectsPage />} />
+
+        </Route>
+
+
+        {/* teacher routes */}
+        <Route
+          path="/teacher"
+          element={
+            <ProtectedRoute allowedRoles={["Teacher"]}>
+              <DashboardLayout userRole={"Teacher"} />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<TeacherDashboard />} />
+          <Route path='pending-requests' element={<PendingRequests />} />
+          <Route path='assigned-students' element={<AssignedStudents />} />
+          <Route path='files' element={<TeacherFiles />} />
 
         </Route>
 
