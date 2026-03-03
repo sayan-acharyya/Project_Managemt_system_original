@@ -19,4 +19,9 @@ export const createRequest = async (requestData) => {
 export const getAllRequests = async (filters) => {
 
 }
- 
+export const acceptRequest = async (requestId, teacherId) => {
+
+}
+export const rejectRequest = async (requestId, teacherId) => {
+
+}

@@ -11,6 +11,7 @@ import * as fileServices from "../services/fileServices.js";
 import { title } from "process";
 import { type } from "os";
 import { SupervisorRequest } from "../models/supervisorRequest.js";
+import { sendEmail } from "../services/emailService.js"
 
 export const getTeacherDashboardStats = asyncHandler(async (req, res, next) => {
     const teacherId = req.user._id;
@@ -45,14 +46,101 @@ export const getTeacherDashboardStats = asyncHandler(async (req, res, next) => {
 });
 
 export const getRequests = asyncHandler(async (req, res, next) => {
- //21:35:22
+    const { supervisor } = req.query;
 
+    const filters = {};
+    if (supervisor) filters.supervisor = supervisor;
+    const { requests, total } = await requestService.getAllRequests(filters);
+
+    const updatedRequests = await Promise.all(requests.map(async (reqObj) => {
+        const requestObj = reqObj.toObject ? reqObj.toObject() : reqObj;
+
+        if (requestObj?.student?._id) {
+            const latestProject = await Project.findOne({
+                student: requestObj.student._id
+            })
+                .sort({ createdAt: -1 })
+                .lean();
+
+            return { ...requestObj, latestProject };
+        }
+        return requestObj;
+    }))
+    res.status(200).json({
+        success: true,
+        message: "Requests fatched successfully",
+        data: {
+            requests: updatedRequests,
+            total
+        }
+    })
 })
 
-// export const getRequests = asyncHandler(async (req, res, next) => {
+export const acceptRequest = asyncHandler(async (req, res, next) => {
+    const { requestId } = req.params;
+    const teacherId = req.user._id;
 
-// })
+    const request = await requestService.acceptRequest(requestId, teacherId);
 
-// export const getRequests = asyncHandler(async (req, res, next) => {
+    if (!request) {
+        return next(new ErrorHandler("Request not found", 404));
+    }
 
-// })
+    await notificationService.notifyUser(
+        request.student._id,
+        `Your supervisor request has been accepted by ${req.user.name}`,
+        "approval",
+        "/students/status",
+        "low"
+    );
+
+    const student = await User.findById(request.student._id);
+    const studentEmail = student.email;
+    const message = generateRequestAcceptTemplate(req.user.name);
+    await sendEmail({
+        to: studentEmail,
+        subject: " ✅ FYP SYSTEM : Your Supervisor Request has been Accepted",
+        message,
+    })
+
+    res.status(200).json({
+        success: true,
+        message: "Request accepted successfully",
+        data: { request }
+    })
+})
+
+export const rejectRequest = asyncHandler(async (req, res, next) => {
+    const { requestId } = req.params;
+    const teacherId = req.user._id;
+
+    const request = await requestService.rejectRequest(requestId, teacherId);
+
+    if (!request) {
+        return next(new ErrorHandler("Request not found", 404));
+    }
+
+    await notificationService.notifyUser(
+        request.student._id,
+        `Your supervisor request has been rejected by ${req.user.name}`,
+        "rejection",
+        "/students/status",
+        "high"
+    );
+    const student = await User.findById(request.student._id);
+    const studentEmail = student.email;
+    const message = generateRequestRejectedTemplate(req.user.name);
+    await sendEmail({
+        to: studentEmail,
+        subject: " ❌ FYP SYSTEM : Your Supervisor Request has been Rejected",
+        message,
+    })
+
+    res.status(200).json({
+        success: true,
+        message: "Request accepted successfully",
+        data: { request }
+    })
+})
+
+//21:52:08
