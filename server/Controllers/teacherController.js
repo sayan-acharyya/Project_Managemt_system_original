@@ -12,6 +12,7 @@ import { title } from "process";
 import { type } from "os";
 import { SupervisorRequest } from "../models/supervisorRequest.js";
 import { sendEmail } from "../services/emailService.js"
+import { generateRequestAcceptedTemplate, generateRequestRejectedTemplate } from "../utills/Email_Templates.js";
 
 export const getTeacherDashboardStats = asyncHandler(async (req, res, next) => {
     const teacherId = req.user._id;
@@ -96,7 +97,7 @@ export const acceptRequest = asyncHandler(async (req, res, next) => {
 
     const student = await User.findById(request.student._id);
     const studentEmail = student.email;
-    const message = generateRequestAcceptTemplate(req.user.name);
+    const message = generateRequestAcceptedTemplate(req.user.name);
     await sendEmail({
         to: studentEmail,
         subject: " ✅ FYP SYSTEM : Your Supervisor Request has been Accepted",
@@ -143,4 +144,4 @@ export const rejectRequest = asyncHandler(async (req, res, next) => {
     })
 })
 
-//21:52:08
+ 
