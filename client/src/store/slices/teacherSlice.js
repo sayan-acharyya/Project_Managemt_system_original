@@ -52,7 +52,7 @@ export const rejectRequests = createAsyncThunk("rejectRequests", async (requestI
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 })
-
+ 
 const teacherSlice = createSlice({
   name: "teacher",
   initialState: {
