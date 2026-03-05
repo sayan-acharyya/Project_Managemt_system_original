@@ -1,4 +1,4 @@
- import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   AlertCircle,
   BadgeCheck,
@@ -30,7 +30,10 @@ const NotificationsPage = () => {
   }, [dispatch]);
 
   const markAsReadHandler = (id) => dispatch(markAsRead(id));
-  const markAllAsReadHandler = () => dispatch(markAllAsRead());
+  const markAllAsReadHandler = async () => {
+    await dispatch(markAllAsRead());
+    dispatch(getNotifications());
+  };
   const deleteNotificationHandler = (id) =>
     dispatch(deleteNotification(id));
 
@@ -220,10 +223,9 @@ const NotificationsPage = () => {
 
                       <span
                         className={`mt-2 inline-block px-2 py-1 text-xs font-medium rounded-full capitalize
-                          ${
-                            notification.priority === "high"
-                              ? "bg-red-100 text-red-700"
-                              : notification.priority === "medium"
+                          ${notification.priority === "high"
+                            ? "bg-red-100 text-red-700"
+                            : notification.priority === "medium"
                               ? "bg-yellow-100 text-yellow-700"
                               : "bg-green-100 text-green-700"
                           }`}
@@ -237,16 +239,15 @@ const NotificationsPage = () => {
                   <div className="flex justify-between items-center mt-4">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full capitalize
-                        ${
-                          notification.type === "feedback"
-                            ? "bg-blue-100 text-blue-700"
-                            : notification.type === "deadline"
+                        ${notification.type === "feedback"
+                          ? "bg-blue-100 text-blue-700"
+                          : notification.type === "deadline"
                             ? "bg-red-100 text-red-700"
                             : notification.type === "approval"
-                            ? "bg-green-100 text-green-700"
-                            : notification.type === "meeting"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-gray-100 text-gray-700"
+                              ? "bg-green-100 text-green-700"
+                              : notification.type === "meeting"
+                                ? "bg-purple-100 text-purple-700"
+                                : "bg-gray-100 text-gray-700"
                         }`}
                     >
                       {notification.type}

@@ -52,7 +52,46 @@ export const rejectRequests = createAsyncThunk("rejectRequests", async (requestI
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 })
- 
+
+export const markComplete = createAsyncThunk("markComplete", async (projectId, thunkAPI) => {
+  try {
+    const res = await axiosInstance.post(`/teacher/mark-complete/${projectId}`);
+
+    toast.success(res.data.message || "Marked as Completed")
+
+    return { projectId };
+
+  } catch (error) {
+    toast.error(error.response.data.message || "Failed to mark completed")
+    return thunkAPI.rejectWithValue(error.response.data.message);
+  }
+})
+
+export const addFeedback = createAsyncThunk("addFeedback", async ({ projectId, payload }, thunkAPI) => {
+  try {
+    const res = await axiosInstance.post(`/teacher/feedback/${projectId}`, payload);
+
+    toast.success(res.data.message || "Feedback posted");
+
+    return { projectId, feedback: res.data.data?.feedback || res.data.data || res.data };
+
+  } catch (error) {
+    toast.error(error.response.data.message || "Failed to post feedback")
+    return thunkAPI.rejectWithValue(error.response.data.message);
+  }
+})
+
+export const getAssignedStudents = createAsyncThunk("getAssignedStudents", async (_, thunkAPI) => {
+  try {
+    const res = await axiosInstance.get(`/teacher/assigned-students`);
+
+    return res.data.data?.students || res.data.data || res.data;
+  } catch (error) {
+    toast.error(error.response.data.message || "Failed to fetch assigned students")
+    return thunkAPI.rejectWithValue(error.response.data.message);
+  }
+})
+
 const teacherSlice = createSlice({
   name: "teacher",
   initialState: {
@@ -74,16 +113,51 @@ const teacherSlice = createSlice({
     });
     builder.addCase(acceptRequests.fulfilled, (state, action) => {
       const updatedRequests = action.payload;
-      state.pendingRequests = state.pendingRequests.map((r) =>
+      state.list = state.list.map((r) =>
         r._id === updatedRequests._id ? updatedRequests : r
       );
 
     });
     builder.addCase(rejectRequests.fulfilled, (state, action) => {
       const rejectedRequests = action.payload;
-      state.pendingRequests = state.pendingRequests.filter((r) =>
+      state.list = state.list.filter((r) =>
         r._id !== rejectedRequests._id ? rejectedRequests : r
       );
+
+    });
+
+    builder.addCase(getAssignedStudents.pending, (state, action) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(getAssignedStudents.fulfilled, (state, action) => {
+      state.loading = false;
+      state.assignedStudents = action.payload?.students || action.payload || [];
+    });
+    builder.addCase(getAssignedStudents.rejected, (state, action) => {
+      state.error = action.payload || "Failed to fetch assigned students";
+      state.loading = false;
+    });
+    builder.addCase(addFeedback.fulfilled, (state, action) => {
+      const { projectId, feedback } = action.payload;
+      state.assignedStudents = state.assignedStudents.map(s =>
+        s.projectId === projectId ? { ...s, feedback } : s);
+
+    });
+    builder.addCase(markComplete.fulfilled, (state, action) => {
+      const { projectId } = action.payload;
+      state.assignedStudents = state.assignedStudents.map(s => {
+        if (s.project._id === projectId) {
+          return {
+            ...s,
+            project: {
+              ...s.project,
+              status: "completed"
+            }
+          }
+        }
+        return s;
+      })
 
     });
   },

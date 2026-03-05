@@ -144,4 +144,91 @@ export const rejectRequest = asyncHandler(async (req, res, next) => {
     })
 })
 
- 
+export const getAssignedStudents = asyncHandler(async (req, res, next) => {
+    const teacherId = req.user._id;
+    const students = (await User.find({ supervisor: teacherId }).populate("project")).sort({ createdAt: -1 });
+
+    const total = await User.countDocuments({ supervisor: teacherId });
+
+    res.status(200).json({
+        success: true,
+        data: { students, total }
+    })
+
+})
+
+
+export const markComplete = asyncHandler(async (req, res, next) => {
+    const { projectId } = req.params;
+    const teacherId = req.user._id;
+
+    const project = await projectServices.getProjectById(projectId);
+
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    if (project.supervisor._id.toString() !== teacherId.toString()) {
+        return next(new ErrorHandler("Not authorized to mark complete", 403));
+    }
+
+    const updatedProject = await projectServices.markComplete(projectId);
+
+    await notificationService.notifyUser(
+        project.student._id,
+        `Your project has been marked as completed by your supervisor (${req.user.name})`,
+        "general",
+        "/students/status",
+        "high"
+    );
+
+    res.status(200).json({
+        success: true,
+        data: { project: updatedProject },
+        message: "Project marked as completed"
+    })
+
+})
+
+
+export const addFeedback = asyncHandler(async (req, res, next) => {
+
+    const { projectId } = req.params;
+    const teacherId = req.user._id;
+    const { message, title, type } = req.body;
+
+    const project = await projectServices.getProjectById(projectId);
+
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    if (project.supervisor._id.toString() !== teacherId.toString()) {
+        return next(new ErrorHandler("Not authorized to send feedback", 403));
+    }
+    if (!message || !title) {
+        return next(new ErrorHandler("Feedback title and message are required", 400));
+    }
+
+    const { project: updatedProject, latestFeedback } = await projectServices.addFeedback(
+        projectId,
+        teacherId,
+        message,
+        title,
+        type
+    );
+
+    await notificationService.notifyUser(
+        project.student._id,
+        `New feedback from your supervisor (${req.user.name})`,
+        "feedback",
+        "/students/feedback",
+        type === "negative" ? "high" : "low"
+    );
+
+    res.status(200).json({
+        success: true,
+        message: "Feedback posted successfully",
+        data: { project: updatedProject, feedback: latestFeedback }
+    })
+})
