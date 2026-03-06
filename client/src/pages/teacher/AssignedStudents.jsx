@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
-import { getAssignedStudents } from '../../store/slices/teacherSlice';
-
+import { addFeedback, getAssignedStudents, markComplete } from '../../store/slices/teacherSlice';
+import { CheckCircle, Loader, MessageSquare, Users } from "lucide-react"
+import { get } from 'mongoose';
 const AssignedStudents = () => {
 
   const [sortBy, setSortBy] = useState("name");
@@ -19,6 +20,8 @@ const AssignedStudents = () => {
     dispatch(getAssignedStudents())
   }, [dispatch])
 
+  const { assignedStudents, loading, error } = useSelector(state => state.teacher);
+
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -31,7 +34,7 @@ const AssignedStudents = () => {
 
       default:
         return "bg-yellow-100 text-yellow-700 border border-yellow-300"
-        break;
+
     }
   }
 
@@ -43,22 +46,77 @@ const AssignedStudents = () => {
   }
 
 
-  //23:44:51
+  const handleFeedback = (student) => {
+    setSelectedStudent(student);
+    setFeedbackData({ title: "", message: "", type: "general" });
+    setShowFeedbackModal(true)
+  }
+
+  const handleMarkComplete = (student) => {
+    setSelectedStudent(student);
+    setShowCompleteModal(true);
+
+  }
+
+  const closeModel = () => {
+    setShowFeedbackModal(false);
+    setShowCompleteModal(false);
+    setSelectedStudent(null);
+    setFeedbackData({ title: "", message: "", type: "general" });
+  }
+
+  const submitFeedback = () => {
+    if (selectedStudent?.project?._id && feedbackData.title && feedbackData.message) {
+      dispatch(addFeedback({
+        projectId: selectedStudent.project._id,
+        payload: feedbackData
+      })
+      );
+      closeModel()
+    }
+  }
 
 
+  const confirmMarkComplete = () => {
+    if (selectedStudent?.project?._id) {
+      dispatch(markComplete(selectedStudent.project._id));
+      closeModel()
+    }
+  }
 
+  const sortedStudents = [...(assignedStudents || [])].sort((a, b) => {
+    switch (sortBy) {
+      case "name":
+        return a.name.localCompare(b.name)
+        break;
+      case "lastActivity":
+        return new Date(b.project?.updatedAt) - new Date(a.project.updatedAt)
+        break;
 
+      default:
+        return 0;
 
+    }
+  })
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader className="w-10 h-10 text-blue-600 animate-spin" />
+      </div>
+    )
+  }
 
-
-
-
-
-
-
-
-
+  if (error) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl shadow-sm">
+          <p className="font-semibold">Something went wrong</p>
+          <p className="text-sm mt-1">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
 
   const stats = [
@@ -67,16 +125,16 @@ const AssignedStudents = () => {
       value: sortedStudents.length,
       bg: "bg-blue-50",
       text: "text-blue-700",
-      sub: "text-blue-600",
+      sub: "text-blue-500",
     },
     {
-      label: "Projects Completed",
+      label: "Completed Projects",
       value: sortedStudents.filter(
         (s) => s.project?.status === "completed"
       ).length,
       bg: "bg-green-50",
       text: "text-green-700",
-      sub: "text-green-600",
+      sub: "text-green-500",
     },
     {
       label: "In Progress",
@@ -85,14 +143,16 @@ const AssignedStudents = () => {
       ).length,
       bg: "bg-yellow-50",
       text: "text-yellow-700",
-      sub: "text-yellow-600",
+      sub: "text-yellow-500",
     },
     {
-      label: "Total Projects",
-      value: sortedStudents.length,
+      label: "Pending Review",
+      value: sortedStudents.filter(
+        (s) => s.project?.status === "approved"
+      ).length,
       bg: "bg-purple-50",
       text: "text-purple-700",
-      sub: "text-purple-600",
+      sub: "text-purple-500",
     },
   ];
 
@@ -100,9 +160,157 @@ const AssignedStudents = () => {
 
 
 
-
   return (
-    <div>AssignedStudents</div>
+    <>
+      <div className='space-y-6'>
+        {/* HEADER */}
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8 mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">
+                Assigned Students
+              </h1>
+              <p className="text-slate-500 mt-2 text-sm md:text-base">
+                Manage your assigned students and their projects
+              </p>
+            </div>
+
+            {/* Optional Right Side (Search / Filter Button Later) */}
+            <div className="flex items-center gap-3">
+              <span className="px-4 py-2 text-sm font-medium bg-indigo-50 text-indigo-600 rounded-xl">
+                {sortedStudents.length}  {sortedStudents.length === 1 ? "student" : "students"}
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-6">
+          {stats.map((item) => (
+            <div
+              key={item.label}
+              className={`${item.bg} p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition`}
+            >
+              <div className="flex flex-col gap-1">
+
+                <p className={`text-sm font-medium ${item.sub}`}>
+                  {item.label}
+                </p>
+
+                <p className={`text-3xl font-bold ${item.text}`}>
+                  {item.value}
+                </p>
+
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* STUDENT GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {sortedStudents.map((student) => (
+            <div
+              key={student._id}
+              className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 font-semibold text-sm">
+                      {student.name?.charAt(0)}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-slate-800 text-base">
+                      {student.name}
+                    </h3>
+                    <p className="text-slate-500 text-xs">{student.email}</p>
+                  </div>
+                </div>
+
+                {/* Status */}
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
+                    student.project?.status
+                  )}`}
+                >
+                  {getStatusText(student.project?.status)}
+                </span>
+              </div>
+
+              {/* Project Info */}
+              <div className="bg-slate-50 rounded-xl p-4 mb-5">
+                <p className="text-xs uppercase text-slate-500 mb-1">
+                  Project Title
+                </p>
+
+                <h4 className="font-medium text-slate-800 text-sm mb-3">
+                  {student.project?.title || "No project assigned"}
+                </h4>
+
+                <p className="text-xs text-slate-500">
+                  Last Update:{" "}
+                  {student.project?.updatedAt
+                    ? new Date(student.project.updatedAt).toLocaleDateString()
+                    : "N/A"}
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => handleFeedback(student)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Feedback
+                </button>
+
+                <button
+                  onClick={() => handleMarkComplete(student)}
+                  disabled={student.project?.status === "completed"}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition 
+          ${student.project?.status === "completed"
+                      ? "bg-green-200 text-white cursor-not-allowed"
+                      : "bg-green-600 text-white hover:bg-green-700"
+                    }`}
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Mark Complete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {
+          sortedStudents.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-slate-100 shadow-sm">
+
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-slate-100 mb-4">
+                <Users className="w-8 h-8 text-slate-500" />
+              </div>
+
+              <h3 className="text-lg font-semibold text-slate-800 mb-1">
+                No Assigned Students
+              </h3>
+
+              <p className="text-sm text-slate-500 text-center max-w-sm">
+                You currently don't have any students assigned. Once students request
+                supervision and you approve them, they will appear here.
+              </p>
+
+            </div>
+          )
+        }
+
+        {/* FEEDBACK MODEL */}
+        
+      </div>
+    </>
   )
 }
 

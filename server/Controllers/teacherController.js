@@ -146,16 +146,18 @@ export const rejectRequest = asyncHandler(async (req, res, next) => {
 
 export const getAssignedStudents = asyncHandler(async (req, res, next) => {
     const teacherId = req.user._id;
-    const students = (await User.find({ supervisor: teacherId }).populate("project")).sort({ createdAt: -1 });
+
+    const students = await User.find({ supervisor: teacherId })
+        .populate("project")
+        .sort({ createdAt: -1 });   // ✅ MongoDB sorting
 
     const total = await User.countDocuments({ supervisor: teacherId });
 
     res.status(200).json({
         success: true,
         data: { students, total }
-    })
-
-})
+    });
+});
 
 
 export const markComplete = asyncHandler(async (req, res, next) => {
