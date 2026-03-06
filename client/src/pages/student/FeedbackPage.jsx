@@ -120,51 +120,66 @@ const FeedbackPage = () => {
           </div>
 
           {/* FEEDBACK LIST */}
-          <div className='space-y-4'>
-            {
-              feedback && feedback.length > 0 ?
-                feedback.map((f, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className='border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow'>
-                      <div className='flex items-center justify-between mb-3'>
-                        <div className='flex items-center space-x-3'>
-                          <div className='flex items-center space-x-2'>
-                            {getFeedbackIcon(f.type)}
-                            <h3 className='font-medium text-slate-800'>
-                              {f.title || "Feedback"}
-                            </h3>
-                          </div>
+          <div className="space-y-5">
+            {feedback && feedback.length > 0 ? (
+              feedback.map((f, i) => {
+                return (
+                  <div
+                    key={i}
+                    className="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-md transition-all duration-200"
+                  >
+                    {/* HEADER */}
+                    <div className="flex items-start justify-between mb-4">
+
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-blue-50">
+                          {getFeedbackIcon(f.type)}
                         </div>
 
-                        <div className='text-right '>
-                          <p className='text-sm border-slate-600'>
-                            {new Date(f.createdAt).toLocaleDateString()}
+                        <div>
+                          <h3 className="font-semibold text-slate-800 text-sm">
+                            {f.title || "Supervisor Feedback"}
+                          </h3>
+
+                          <p className="text-xs text-slate-500 mt-1">
+                            {f.supervisorName || "Supervisor"}
                           </p>
-                          <p>{f.supervisorName || "Supervisor"}</p>
                         </div>
                       </div>
 
-                      <div className='bg-slate-50 rounded-lg mb-3'>
-                        <p className='text-slate-700 leading-relaxed'>
-                          {f.message}
-                        </p>
-                      </div>
+                      <span className="text-xs text-slate-500 whitespace-nowrap">
+                        {new Date(f.createdAt).toLocaleDateString()}
+                      </span>
+
                     </div>
-                  )
-                })
-                :
-                (
-                  <>
-                    <div className='text-center py-8 '>
-                      <MessageCircleWarning  className='w-16 h-16 text-slate-300 mx-auto mb-4' />
-                      <p className='text-slate-500'>
-                        No feedback received yet
+
+                    {/* MESSAGE */}
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                      <p className="text-sm text-slate-700 leading-relaxed">
+                        {f.message}
                       </p>
                     </div>
-                  </>)
-            }
+
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex flex-col items-center justify-center py-14 text-center bg-white border border-slate-100 rounded-2xl">
+
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-slate-100 mb-4">
+                  <MessageCircleWarning className="w-8 h-8 text-slate-400" />
+                </div>
+
+                <p className="text-slate-600 font-medium">
+                  No feedback received yet
+                </p>
+
+                <p className="text-sm text-slate-400 mt-1">
+                  Your supervisor feedback will appear here.
+                </p>
+
+              </div>
+            )}
           </div>
 
         </div>

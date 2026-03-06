@@ -16,8 +16,10 @@ const StudentDashboard = () => {
   const supervisorName = dashboardStats?.supervisorName || "N/A"
   const upcomingDeadlines = dashboardStats?.upcomingDeadlines || []
   const topNotifications = dashboardStats?.topNotifications || []
-  const feedbackList = dashboardStats?.feedbackList?.slice(-2).reverse() || []
+  const feedbackList = dashboardStats?.feedbackNotifications?.slice(-2).reverse() || []
 
+ 
+  
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
 

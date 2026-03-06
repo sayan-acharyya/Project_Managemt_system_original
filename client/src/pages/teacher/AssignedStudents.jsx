@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { addFeedback, getAssignedStudents, markComplete } from '../../store/slices/teacherSlice';
-import { CheckCircle, Loader, MessageSquare, Users } from "lucide-react"
+import { CheckCircle, Loader, MessageSquare, Users, X } from "lucide-react"
 import { get } from 'mongoose';
 const AssignedStudents = () => {
 
@@ -251,10 +251,10 @@ const AssignedStudents = () => {
                   {student.project?.title || "No project assigned"}
                 </h4>
 
-                <p className="text-xs text-slate-500">
-                  Last Update:{" "}
+                <p className="text-xs text-slate-500 uppercase">
+                  deadline:{" "}
                   {student.project?.updatedAt
-                    ? new Date(student.project.updatedAt).toLocaleDateString()
+                    ? new Date(student.project?.deadline).toLocaleDateString()
                     : "N/A"}
                 </p>
               </div>
@@ -308,7 +308,246 @@ const AssignedStudents = () => {
         }
 
         {/* FEEDBACK MODEL */}
-        
+        {
+          showFeedbackModal && selectedStudent && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+              <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white p-6 shadow-xl">
+
+                {/* Close Icon */}
+                <button
+                  onClick={closeModel}
+                  className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition"
+                >
+                  <X size={20} />
+                </button>
+
+                {/* Title */}
+                <h3 className="text-center text-lg font-semibold text-slate-800">
+                  Provide Feedback
+                </h3>
+
+                {/* PROJECT INFO */}
+                <div className='bg-slate-50 rounded-lg p-4 mb-6'>
+                  <div className='space-y-2 text-sm'>
+                    <div>
+                      <span className='font-medium text-slate-600 uppercase'>
+                        Project:
+                      </span>
+                      <span className='text-slate-800 ml-2'>
+                        {selectedStudent.project?.title}
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className='font-medium text-slate-600 uppercase'>
+                        Student:
+                      </span>
+                      <span className='text-slate-800 ml-2'>
+                        {selectedStudent.name}
+                      </span>
+                    </div>
+
+                    {
+                      selectedStudent.project?.deadline && (
+                        <div>
+                          <span className='font-medium text-slate-600 uppercase'>
+                            deadline:
+                          </span>
+                          <span className='text-slate-800 ml-2'>
+                            {new Date(selectedStudent.project?.deadline).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )
+                    }
+
+                    <div>
+                      <span className='font-medium text-slate-600 uppercase'>
+                        status:
+                      </span>
+                      <span className='text-slate-800 ml-2'>
+                        {selectedStudent.project.status}
+                      </span>
+                    </div>
+
+                    {/* FEEDBACK FORM */}
+                    <div className="space-y-5 mt-5">
+
+                      {/* Feedback Title */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          Feedback Title
+                        </label>
+
+                        <input
+                          value={feedbackData.title}
+                          onChange={(e) =>
+                            setFeedbackData({ ...feedbackData, title: e.target.value })
+                          }
+                          type="text"
+                          placeholder="Enter feedback title"
+                          className="w-full px-4 py-2.5 border border-slate-300 rounded-lg 
+      text-sm outline-none transition
+      focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      {/* Feedback Type */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          Feedback Type
+                        </label>
+
+                        <select
+                          value={feedbackData.type}
+                          onChange={(e) =>
+                            setFeedbackData({ ...feedbackData, type: e.target.value })
+                          }
+                          className="w-full px-4 py-2.5 border border-slate-300 rounded-lg 
+      text-sm bg-white outline-none transition
+      focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="general">General</option>
+                          <option value="positive">Positive</option>
+                          <option value="negative">Negative</option>
+                        </select>
+                      </div>
+
+                      {/* Feedback Message */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          Feedback Message
+                        </label>
+
+                        <textarea
+                          rows="4"
+                          placeholder="Give your feedback here..."
+                          value={feedbackData.message}
+                          onChange={(e) =>
+                            setFeedbackData({
+                              ...feedbackData,
+                              message: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2.5 border border-slate-300 rounded-lg 
+      text-sm resize-none outline-none transition
+      focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex justify-end gap-3 pt-2">
+                        <button
+                          onClick={closeModel}
+                          className="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition"
+                        >
+                          Cancel
+                        </button>
+
+                        <button
+                          onClick={submitFeedback}
+
+                          className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+                        >
+                          Submit Feedback
+                        </button>
+                      </div>
+
+                    </div>
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        }
+
+        {/* MARK_AS_COMPLETE MODAL */}
+
+        {
+          showCompleteModal && selectedStudent && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+              <div className="relative w-full max-w-md mx-4 bg-white rounded-2xl shadow-xl p-6">
+
+                {/* Close Icon */}
+                <button
+                  onClick={closeModel}
+                  className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition"
+                >
+                  <X size={20} />
+                </button>
+
+                {/* Icon */}
+                <div className="flex justify-center mb-4">
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-green-100">
+                    <CheckCircle className="w-7 h-7 text-green-600" />
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-center text-lg font-semibold text-slate-800 mb-2">
+                  Mark Project as Completed
+                </h3>
+
+                {/* Description */}
+                <p className="text-center text-sm text-slate-500 mb-6">
+                  Are you sure you want to mark this project as completed?
+                  This action will notify the student.
+                </p>
+
+                {/* Project Info */}
+                <div className="bg-slate-50 rounded-xl p-4 space-y-2 mb-6 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Student</span>
+                    <span className="font-medium text-slate-800">
+                      {selectedStudent.name}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Project</span>
+                    <span className="font-medium text-slate-800">
+                      {selectedStudent.project?.title}
+                    </span>
+                  </div>
+
+                  {selectedStudent.project?.deadline && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Deadline</span>
+                      <span className="font-medium text-slate-800">
+                        {new Date(selectedStudent.project.deadline).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Buttons */}
+                <div className="flex items-center justify-end gap-3">
+
+                  <button
+                    onClick={closeModel}
+                    className="px-4 py-2 text-sm rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={confirmMarkComplete}
+                    className="px-4 py-2 text-sm rounded-lg bg-green-600 text-white hover:bg-green-700 transition flex items-center gap-2"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Confirm
+                  </button>
+
+                </div>
+
+              </div>
+            </div>
+          )
+        }
+
       </div>
     </>
   )
