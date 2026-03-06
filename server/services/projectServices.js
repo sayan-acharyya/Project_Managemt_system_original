@@ -92,3 +92,7 @@ export const addFeedback = async (projectId,
     const latestFeedback = project.feedback[project.feedback.length - 1];
     return { project, latestFeedback };
 }
+
+export const getProjectsBySupervisor = async (supervisorId) => {
+    return await getAllProjects({ supervisor: supervisorId });
+}

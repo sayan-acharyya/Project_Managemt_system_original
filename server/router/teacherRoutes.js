@@ -1,6 +1,6 @@
 import express from "express";
 import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js";
-import { getRequests, getTeacherDashboardStats, acceptRequest, rejectRequest, addFeedback, markComplete, getAssignedStudents } from "../Controllers/teacherController.js"
+import { getRequests, getTeacherDashboardStats, acceptRequest, rejectRequest, addFeedback, markComplete, getAssignedStudents, downloadFile, getFiles } from "../Controllers/teacherController.js"
 const router = express.Router();
 
 router.get(
@@ -52,4 +52,17 @@ router.get(
     getAssignedStudents
 )
 
+router.get(
+    "/:projectId/files/:fileId/download",
+    isAuthenticated,
+    isAuthorized("Teacher"),
+    downloadFile
+);
+
+router.get(
+    "/files",
+    isAuthenticated,
+    isAuthorized("Teacher"),
+    getFiles
+);
 export default router;

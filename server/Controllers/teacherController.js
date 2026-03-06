@@ -234,3 +234,54 @@ export const addFeedback = asyncHandler(async (req, res, next) => {
         data: { project: updatedProject, feedback: latestFeedback }
     })
 })
+
+export const getFiles = asyncHandler(async (req, res, next) => {
+    const teacherId = req.user._id;
+
+    const projects = await projectServices.getProjectsBySupervisor(teacherId);
+
+    const allFiles = projects.flatMap(project =>
+        (project.files || []).map(file => ({
+            ...file.toObject(),
+            projectId: project._id,
+            projectTitle: project.title,
+            studentName: project.student?.name,
+            studentEmail: project.student?.email
+        }))
+    );
+
+    res.status(200).json({
+        success: true,
+        message: "Files fetched successfully",
+        data: {
+            files: allFiles,
+
+        }
+    });
+});
+
+export const downloadFile = asyncHandler(async (req, res, next) => {
+    const { projectId, fileId } = req.params;
+    const supervisorId = req.user._id;
+
+    const project = await projectServices.getProjectById(projectId);
+
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    // Authorization check
+    if (project.supervisor._id.toString() !== supervisorId.toString()) {
+        return next(
+            new ErrorHandler("Not authorized to download files", 403)
+        );
+    }
+
+    const file = project.files.id(fileId);
+
+    if (!file) {
+        return next(new ErrorHandler("File not found", 404));
+    }
+
+    return fileServices.streamDownload(file.fileUrl, res, file.originalName);
+});

@@ -92,6 +92,38 @@ export const getAssignedStudents = createAsyncThunk("getAssignedStudents", async
   }
 })
 
+export const downloadTeacherFiles = createAsyncThunk(
+  "downloadTeacherFiles",
+  async ({ projectId, fileId }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`/teacher/${projectId}/files/${fileId}/download`,
+        { responseType: "blob" }
+      );
+
+      return { blob: res.data, projectId, fileId }
+    } catch (error) {
+      toast.error(error.response.data.message || "Failed to download files");
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  })
+
+export const getFiles = createAsyncThunk(
+  "teacher/getFiles",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get("/teacher/files");
+
+      return res.data.data.files;
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Failed to fetch files";
+
+      toast.error(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const teacherSlice = createSlice({
   name: "teacher",
   initialState: {
@@ -160,6 +192,10 @@ const teacherSlice = createSlice({
       })
 
     });
+    builder.addCase(getFiles.fulfilled, (state, action) => {
+      state.files = action.payload?.files || action.payload || [];
+    });
+
   },
 });
 
