@@ -238,7 +238,9 @@ export const addFeedback = asyncHandler(async (req, res, next) => {
 export const getFiles = asyncHandler(async (req, res, next) => {
     const teacherId = req.user._id;
 
-    const projects = await projectServices.getProjectsBySupervisor(teacherId);
+    const projects = await Project.find({ supervisor: teacherId })
+        .populate("student", "name email")
+        .select("title files student");
 
     const allFiles = projects.flatMap(project =>
         (project.files || []).map(file => ({
@@ -254,8 +256,7 @@ export const getFiles = asyncHandler(async (req, res, next) => {
         success: true,
         message: "Files fetched successfully",
         data: {
-            files: allFiles,
-
+            files: allFiles
         }
     });
 });
