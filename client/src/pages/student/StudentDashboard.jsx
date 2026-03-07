@@ -18,8 +18,8 @@ const StudentDashboard = () => {
   const topNotifications = dashboardStats?.topNotifications || []
   const feedbackList = dashboardStats?.feedbackNotifications?.slice(-2).reverse() || []
 
- 
-  
+
+
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
 
@@ -270,7 +270,7 @@ const StudentDashboard = () => {
                       {d.title}
                     </p>
                     <p className="text-sm text-slate-500 mt-1">
-                      {formatDate(d.deadline)}
+                      {formatDate(project?.deadline)}
                     </p>
                   </div>
 
@@ -321,7 +321,7 @@ const StudentDashboard = () => {
                         return (
                           <div
                             className='p-3 bg-slate-50 rounded-lg border border-slate-100'
-                            key={i}>   
+                            key={i}>
                             <p className='font-medium text-slate-800'>{n.message}</p>
                             <p className='text-xs text-slate-500 mt-1'>{formatDate(n.createdAt)}</p>
                           </div>
@@ -339,10 +339,10 @@ const StudentDashboard = () => {
                   </div>
 
                   <p className="mt-4 text-slate-600 font-medium">
-                    No notifications yet   
+                    No notifications yet
                   </p>
 
-                  <p className="text-sm text-slate-400"> 
+                  <p className="text-sm text-slate-400">
                     You're all updated 🎉
                   </p>
                 </div>
