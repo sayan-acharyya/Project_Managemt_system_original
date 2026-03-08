@@ -60,6 +60,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
           },
           { name: "Deadlines", path: "/admin/deadlines", icon: "calendar" },
           { name: "Projects", path: "/admin/projects", icon: "folder" },
+          { name: "Recent Activity", path: "/admin/notification", icon: "bell" },
         ];
       default:
         return [];

@@ -26,6 +26,7 @@ import TeacherDashboard from './pages/teacher/TeacherDashboard'
 import PendingRequests from './pages/teacher/PendingRequests'
 import AssignedStudents from './pages/teacher/AssignedStudents'
 import TeacherFiles from './pages/teacher/TeacherFiles'
+import ResentActivity from './pages/admin/ResentActivity'
 
 const App = () => {
 
@@ -93,7 +94,7 @@ const App = () => {
           <Route path='assign-supervisor' element={<AssignSupervisor />} />
           <Route path='deadlines' element={<DeadlinesPage />} />
           <Route path='projects' element={<ProjectsPage />} />
-
+          <Route path='notification' element={<ResentActivity />} />
         </Route>
 
 

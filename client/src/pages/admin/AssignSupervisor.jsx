@@ -1,4 +1,4 @@
- 
+
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { assignSupervisor, getAllUsers } from "../../store/slices/adminSlice";
@@ -284,6 +284,42 @@ const AssignSupervisor = () => {
           </div>
         </div>
 
+        {/* SUMMAERY */}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {dashboardCards.map((card, index) => {
+            const Icon = card.icon;
+
+            return (
+              <div
+                key={index}
+                className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm border border-slate-100 
+                   hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              >
+                {/* Glow Effect */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-slate-100 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition" />
+
+                <div className="relative flex items-center justify-between">
+                  {/* Left Side */}
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-xl ${card.bg} shadow-inner`}>
+                      <Icon className={`w-6 h-6 ${card.color}`} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-medium text-slate-500">
+                        {card.title}
+                      </p>
+                      <p className="text-2xl font-bold text-slate-800 tracking-tight">
+                        {card.value}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
         {/* TABLE */}
         <div className="card">
           <div className="card-header">
@@ -511,42 +547,7 @@ const AssignSupervisor = () => {
           </div>
         </div>
 
-        {/* SUMMAERY */}
-      
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {dashboardCards.map((card, index) => {
-            const Icon = card.icon;
 
-            return (
-              <div
-                key={index}
-                className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm border border-slate-100 
-                   hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-              >
-                {/* Glow Effect */}
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-slate-100 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition" />
-
-                <div className="relative flex items-center justify-between">
-                  {/* Left Side */}
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-xl ${card.bg} shadow-inner`}>
-                      <Icon className={`w-6 h-6 ${card.color}`} />
-                    </div>
-
-                    <div>
-                      <p className="text-sm font-medium text-slate-500">
-                        {card.title}
-                      </p>
-                      <p className="text-2xl font-bold text-slate-800 tracking-tight">
-                        {card.value}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
 
       </div>
     </>

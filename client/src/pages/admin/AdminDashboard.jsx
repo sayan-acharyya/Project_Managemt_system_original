@@ -16,8 +16,9 @@ import { toast } from "react-toastify";
 import { getAllProjects, getDashboardStates } from "../../store/slices/adminSlice";
 import { getNotifications } from "../../store/slices/notificationSlice";
 import { downloadProjectFiles } from "../../store/slices/projectSlice";
-import { AlertCircle, AlertTriangle, Box, CheckCircle, FileTextIcon, Folder, PlusIcon, User, Users, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, ArrowRight, Box, CheckCircle, FileTextIcon, Folder, PlusIcon, User, Users, X } from "lucide-react";
 import { toggleStudentModel, toggleTeacherModel } from "../../store/slices/popupSlice";
+import { useNavigate } from "react-router-dom";
 
 
 const AdminDashboard = () => {
@@ -26,7 +27,7 @@ const AdminDashboard = () => {
 
   const { stats, projects } = useSelector(state => state.admin);
   // const { } = useSelector(state => state.project);
-  const { notifications } = useSelector(state => state.notification.list);
+  const notifications = useSelector(state => state.notification.list);
 
 
   const dispatch = useDispatch();
@@ -170,7 +171,7 @@ const AdminDashboard = () => {
     },
     {
       title: "Pending Requests",
-      value: stats?.pendingRequests ?? 0,
+      value: projects.filter((p) => p.status === "pending").length,
       bg: "bg-orange-100",
       iconBg: "bg-orange-100",
       iconColor: "text-orange-600",
@@ -194,6 +195,7 @@ const AdminDashboard = () => {
     },
   ];
 
+
   const actionButtons = [
     {
       label: "Add Student",
@@ -216,7 +218,7 @@ const AdminDashboard = () => {
   ];
 
 
-
+const navigate = useNavigate();
   // const dashboardCards = [
   //     {
   //       title: "Assigned Students",
@@ -264,36 +266,36 @@ const AdminDashboard = () => {
   bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 
   p-10 text-white shadow-2xl">
 
-  {/* Soft Glow Effects */}
-  <div className="absolute -top-12 -right-12 w-52 h-52 bg-white/10 rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-12 -left-12 w-52 h-52 bg-black/10 rounded-full blur-3xl"></div>
+          {/* Soft Glow Effects */}
+          <div className="absolute -top-12 -right-12 w-52 h-52 bg-white/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-12 -left-12 w-52 h-52 bg-black/10 rounded-full blur-3xl"></div>
 
-  <div className="relative z-10 flex items-center justify-between">
+          <div className="relative z-10 flex items-center justify-between">
 
-    {/* Left Content */}
-    <div>
-      <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-        Admin Control Panel
-      </h1>
+            {/* Left Content */}
+            <div>
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+                Admin Control Panel
+              </h1>
 
-      <p className="mt-4 text-indigo-100 text-lg max-w-2xl">
-        Monitor system performance, manage users, and control project workflows
-        from one powerful dashboard.
-      </p>
-    </div>
+              <p className="mt-4 text-indigo-100 text-lg max-w-2xl">
+                Monitor system performance, manage users, and control project workflows
+                from one powerful dashboard.
+              </p>
+            </div>
 
-    {/* Right Badge */}
-    <div className="hidden md:flex items-center">
-      <span className="px-5 py-2 text-sm font-semibold 
+            {/* Right Badge */}
+            <div className="hidden md:flex items-center">
+              <span className="px-5 py-2 text-sm font-semibold 
         bg-white/20 backdrop-blur-md 
         border border-white/30 
         rounded-full shadow-lg tracking-wide">
-        ADMIN PANEL
-      </span>
-    </div>
+                ADMIN PANEL
+              </span>
+            </div>
 
-  </div>
-</div>
+          </div>
+        </div>
 
         {/* STATES CARDS */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6  '>
@@ -413,10 +415,20 @@ const AdminDashboard = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
 
             {/* Header */}
-            <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-100">
+            <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-100 flex items-center justify-between">
+
               <h3 className="text-lg font-semibold text-slate-800">
                 Recent Activity
               </h3>
+
+              <button
+                onClick={() => navigate("/admin/notification")}
+                className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition"
+              >
+                View All
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
             </div>
 
             {/* Body */}
