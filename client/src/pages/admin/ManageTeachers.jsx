@@ -7,7 +7,7 @@ import {
   updateTeacher,
 } from "../../store/slices/adminSlice";
 import { toggleTeacherModel } from "../../store/slices/popupSlice";
-import { BadgeCheck, CheckCircle, ChevronDown, Filter, Plus, Search, TriangleAlert, UserSquare2 } from "lucide-react";
+import { BadgeCheck, CheckCircle, ChevronDown, Filter, Plus, Search, TriangleAlert, UserMinus, UserSquare2, UserX } from "lucide-react";
 import AddTeacher from "../../components/modal/AddTeacher";
 
 const ManageTeachers = () => {
@@ -32,7 +32,7 @@ const ManageTeachers = () => {
     maxStudents: 10,
   });
 
- 
+
 
   // Teachers list
   const teachers = useMemo(() => {
@@ -146,7 +146,7 @@ const ManageTeachers = () => {
               Manage Teachers
             </h1>
             <p className="text-base text-gray-500 mt-1">
-             View, organize, and manage teacher profiles and responsibilities.
+              View, organize, and manage teacher profiles and responsibilities.
             </p>
           </div>
 
@@ -162,7 +162,8 @@ const ManageTeachers = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+
           {[
             {
               label: "Total Teachers",
@@ -177,22 +178,56 @@ const ManageTeachers = () => {
               bg: "bg-emerald-50"
             },
             {
+              label: "Unassigned Students",
+              value: users.filter(
+                (u) => u.role === "Student" && u.supervisor === null
+              ).length,
+              icon: <UserX className="w-6 h-6 text-orange-600" />,
+              bg: "bg-orange-50"
+            },
+            {
+              label: "Unassigned Teachers",
+              value: users.filter(
+                (u) => u.assignedStudents?.length === 0 && u.role === "Teacher"
+              ).length,
+              icon: <UserMinus className="w-6 h-6 text-red-600" />,
+              bg: "bg-red-50"
+            },
+            {
               label: "Departments",
               value: departments.length,
               icon: <TriangleAlert className="w-6 h-6 text-amber-600" />,
               bg: "bg-amber-50"
-            },
+            }
           ].map((stat, i) => (
-            <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center space-x-4">
-              <div className={`p-4 ${stat.bg} rounded-2xl`}>
+
+            <div
+              key={i}
+              className="group bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex items-center justify-between"
+            >
+
+              {/* LEFT */}
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                  {stat.label}
+                </p>
+
+                <h3 className="text-3xl font-bold text-gray-900">
+                  {stat.value}
+                </h3>
+              </div>
+
+              {/* RIGHT ICON */}
+              <div
+                className={`p-4 rounded-xl ${stat.bg} flex items-center justify-center group-hover:scale-110 transition`}
+              >
                 {stat.icon}
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider">{stat.label}</p>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              </div>
+
             </div>
+
           ))}
+
         </div>
 
         {/* Search & Filter Bar */}
@@ -258,7 +293,10 @@ const ManageTeachers = () => {
                           Experties
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                          Join Date
+                          Max Capacity
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Assigned Students
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                           Actions
@@ -286,7 +324,7 @@ const ManageTeachers = () => {
                               </td>
 
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-slate-900">
+                                <div className="text-sm   text-slate-900">
                                   {teacher.department || "--"}
                                 </div>
                               </td>
@@ -301,10 +339,26 @@ const ManageTeachers = () => {
 
                               </td>
 
-                              <td className="px-6 py-4">
-                                <div className="text-sm text-slate-900 ">
-                                  {teacher.createdAt ? new Date(teacher.createdAt).toLocaleString() : "--"}
-                                </div>
+                              <td className="px-6 py-4 whitespace-nowrap text-center">
+                                <span className="inline-flex px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-700">
+                                  {teacher.maxStudents}
+                                </span>
+                              </td>
+
+                              <td className="px-6 py-4 whitespace-nowrap text-center">
+                                {teacher?.assignedStudents?.length === 0 ? (
+                                  <span className="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                                    Not Assigned
+                                  </span>
+                                ) : teacher?.assignedStudents?.length === teacher?.maxStudents ? (
+                                  <span className="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+                                    Full
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-700">
+                                    {teacher.assignedStudents.length}
+                                  </span>
+                                )}
                               </td>
 
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

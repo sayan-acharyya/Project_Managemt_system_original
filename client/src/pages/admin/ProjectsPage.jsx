@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 //   rejectProject,
 // } from "../../store/slices/projectSlice";
 
-import { AlertTriangle, Eye, BadgeCheck, CheckCircle, CheckCircle2, ChevronDown, Clock, FileDown, Filter, Folder, Plus, Search, X, XCircle } from "lucide-react";
+import { AlertTriangle, Eye, BadgeCheck, CheckCircle, CheckCircle2, ChevronDown, Clock, FileDown, Filter, Folder, Plus, Search, X, XCircle, FileTextIcon } from "lucide-react";
 import { downloadProjectFiles } from "../../store/slices/projectSlice";
 
 const ProjectsPage = () => {
@@ -199,6 +199,16 @@ const ProjectsPage = () => {
       console.error("Status update failed", error);
     }
   };
+
+  const projectFiles = useMemo(() => {
+    if (!currentProject) return [];
+    return (currentProject.files || []).map((f) => ({
+      projectId: currentProject._id,
+      fileId: f._id,
+      originalName: f.originalName,
+      uploadedAt: f.uploadedAt
+    }));
+  }, [currentProject]);
 
   /* ---------------- UI ---------------- */
 
@@ -500,11 +510,9 @@ const ProjectsPage = () => {
 
                       <button
                         onClick={async () => {
-                          // const res = await dispatch(getProject(project._id));
-                          // if (!getProject.fulfilled.match(res)) return;
-                          // const detail = res.payload?.payload || res.payload;
-                          // setCurrentProject(detail);
-                          // setShowViewModal(true);
+
+                          setCurrentProject(project);
+                          setShowViewModal(true);
                         }}
                         className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition"
                       >
@@ -589,8 +597,267 @@ const ProjectsPage = () => {
         </div>
       </div>
 
- 
+      {/* VIEW MODEL */}
+      {showViewModal && currentProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 
+          <div className="relative w-full max-w-3xl mx-4 rounded-2xl bg-white shadow-xl flex flex-col max-h-[90vh]">
+
+            {/* HEADER */}
+            <div className="flex justify-between items-center border-b px-6 py-4 flex-shrink-0">
+              <h3 className="text-lg font-semibold text-slate-900">
+                Project Details
+              </h3>
+
+              <button
+                onClick={() => setShowViewModal(false)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* BODY (SCROLLABLE) */}
+            <div className="p-6 space-y-6 overflow-y-auto">
+
+              {/* TITLE */}
+              <div>
+                <p className="text-sm font-medium text-slate-600 mb-1">
+                  Project Title
+                </p>
+                <div className="bg-slate-50 rounded-lg p-3 text-slate-800">
+                  {currentProject.title || "-"}
+                </div>
+              </div>
+
+              {/* DESCRIPTION */}
+              <div>
+                <p className="text-sm font-medium text-slate-600 mb-1">
+                  Description
+                </p>
+                <div className="bg-slate-50 rounded-lg p-3 text-slate-800">
+                  {currentProject.description || "-"}
+                </div>
+              </div>
+
+              {/* INFO GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                  <p className="text-sm font-medium text-slate-600 mb-1">Student</p>
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    {currentProject.student?.name || "N/A"}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-slate-600 mb-1">Supervisor</p>
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    {currentProject.supervisor?.name || "Not Assigned"}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-slate-600 mb-1">Status</p>
+                  <div className="bg-slate-50 rounded-lg p-3 capitalize">
+                    {currentProject.status}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-slate-600 mb-1">Deadline</p>
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    {currentProject.deadline
+                      ? currentProject.deadline.split("T")[0]
+                      : "Not Set"}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* FILES */}
+              <div>
+                <h4 className="text-md font-semibold text-slate-800 mb-3">
+                  Project Files
+                </h4>
+
+                {projectFiles.length === 0 ? (
+                  <div className="text-sm text-slate-500">
+                    No files uploaded
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {projectFiles.map((file) => (
+                      <div
+                        key={file.fileId}
+                        className="flex items-center justify-between bg-slate-50 rounded-lg p-3"
+                      >
+                        <span className="text-sm text-slate-700">
+                          {file.originalName}
+                        </span>
+
+                        <button
+                          onClick={() =>
+                            handleDownload(
+                              file.projectId,
+                              file.fileId,
+                              file.originalName
+                            )
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md"
+                        >
+                          Download
+                        </button>
+
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {/* report model */}
+      {
+        isReportsOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+              onClick={() => setIsReportsOpen(false)}
+            />
+
+            {/* Modal */}
+            <div className="
+              relative w-full max-w-4xl mx-4
+              bg-white rounded-2xl shadow-2xl
+              border border-slate-100
+              overflow-hidden
+              animate-[fadeIn_.25s_ease-out]
+            ">
+
+              {/* Header */}
+              <div className="relative px-6 py-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-slate-100">
+
+                {/* Soft Glow */}
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
+
+                <div className="relative flex items-center justify-between">
+                  <h3 className="text-xl font-semibold text-slate-800 tracking-wide">
+                    All Files
+                  </h3>
+
+                  <button
+                    onClick={() => setIsReportsOpen(false)}
+                    className="
+                      p-2 rounded-lg
+                      text-slate-400 hover:text-slate-700
+                      hover:bg-white/60
+                      transition-all duration-200
+                    "
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+
+              {/* Body */}
+              <div className="p-6 max-h-[70vh] overflow-y-auto bg-gradient-to-b from-slate-50 to-white">
+
+                {/* Search Section */}
+                <div className="mb-6">
+                  <div className="relative group">
+
+                    {/* Search Icon */}
+                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M21 21l-4.35-4.35m1.6-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+
+                    <input
+                      type="text"
+                      value={reportSearch}
+                      onChange={(e) => setReportSearch(e.target.value)}
+                      placeholder="Search by file name, project title, or student name..."
+                      className="
+                w-full pl-11 pr-4 py-3
+                rounded-xl border border-slate-200
+                bg-white text-sm text-slate-700
+                shadow-sm
+                focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+                transition-all duration-200
+              "
+                    />
+                  </div>
+
+                  {/* Small helper text */}
+                  <p className="text-xs text-slate-400 mt-2">
+                    Quickly find uploaded reports by name or related project.
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-slate-200 pt-6">
+
+                  {/* Empty state example */}
+                  {filteredFiles.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+                      <FileTextIcon className="w-10 h-10 mb-3 opacity-40" />
+                      <p className="text-sm">No matching files found</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {filteredFiles.map((f, i) => {
+                        return (
+                          <div
+                            key={i}
+                            className="flex items-center justify-between p-3 bg-slate-50 rounded"
+                          >
+                            <div>
+                              <div className="font-medium text-slate-800 ">
+                                {f.originalName}
+                              </div>
+                              <div className="text-sm text-slate-500">
+                                {f.projectTitle} - {f.studentName}
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => handleDownload(f.projectId, f.fileId, f.originalName)}
+                              className="btn-outline btn-small bg-blue-600 rounded-lg px-2 py-1 text-white">Download </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                  )}
+
+                </div>
+              </div>
+
+
+
+            </div>
+          </div>
+        )
+      }
 
     </div >
 
