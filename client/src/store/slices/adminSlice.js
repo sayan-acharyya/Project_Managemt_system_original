@@ -110,6 +110,28 @@ export const assignSupervisor = createAsyncThunk("assignSupervisor", async (data
     }
 })
 
+export const approveProject = createAsyncThunk("approveProject", async (id, thunkAPI) => {
+    try {
+        const res = await axiosInstance.put(`/admin/project/${id}`, { status: "approved" });
+        toast.success("Project approved successfully");
+        return id;
+    } catch (error) {
+        toast.error(error.response.data.message || "Failed to approved Project");
+        return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+})
+
+export const rejectProject = createAsyncThunk("rejectProject", async (id, thunkAPI) => {
+    try {
+        const res = await axiosInstance.put(`/admin/project/${id}`, { status: "rejected" });
+        toast.success("Project rejected");
+        return id;
+    } catch (error) {
+        toast.error(error.response.data.message || "Failed to rejected Project");
+        return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+})
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {
@@ -158,6 +180,16 @@ const adminSlice = createSlice({
             })
             .addCase(getDashboardStates.fulfilled, (state, action) => {
                 state.stats = action.payload;
+            })
+            .addCase(approveProject.fulfilled, (state, action) => {
+                const projectId = action.payload;
+
+                state.projects = state.projects.map(p => p._id === projectId ? { ...p, status: "approved" } : p)
+            })
+            .addCase(rejectProject.fulfilled, (state, action) => {
+                const projectId = action.payload;
+
+                state.projects = state.projects.map(p => p._id === projectId ? { ...p, status: "rejected" } : p)
             })
 
     },

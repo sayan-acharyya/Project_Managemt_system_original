@@ -240,4 +240,31 @@ export const getDashboardStates = asyncHandler(async (req, res, next) => {
     })
 })
 
+export const updateProjectStatus = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const updateData = req.body;
+    const user = req.user;
 
+    const project = await projectServices.getProjectById(id);
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404))
+    }
+
+    const userRole = (user.role || "").toLowerCase();
+    const userId = user._id?.toString() || user.id;
+
+    const hasAccess = userRole === "admin" ||
+        project.student._id.toString() === userId ||
+        (project.supervisor && project.supervisor._id.toString() === userId);
+
+    if (!hasAccess) {
+        return next(new ErrorHandler("Not authorized to update this project status", 403))
+    }
+
+    const updatedProject = await projectServices.updateProject(id, updateData);
+    return res.status(200).json({
+        success: true,
+        message: "Project status updated successfully",
+        data: { project: updatedProject }
+    })
+})

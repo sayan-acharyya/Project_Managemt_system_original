@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { AlertTriangle, Eye, BadgeCheck, CheckCircle, CheckCircle2, ChevronDown, Clock, FileDown, Filter, Folder, Plus, Search, X, XCircle, FileTextIcon } from "lucide-react";
 import { downloadProjectFiles } from "../../store/slices/projectSlice";
+import { approveProject, rejectProject } from "../../store/slices/adminSlice";
 
 const ProjectsPage = () => {
   const dispatch = useDispatch();
