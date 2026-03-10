@@ -103,29 +103,20 @@ const ProjectsPage = () => {
 
   /* ---------------- Download File ---------------- */
 
-  const handleDownload = async (projectId, fileId, name) => {
-    try {
-      const res = await dispatch(
-        downloadProjectFiles({ projectId, fileId })
-      );
+const handleDownload = async (projectId, fileId, name) => {
+  try {
+    const res = await dispatch(
+      downloadProjectFiles({ projectId, fileId })
+    ).unwrap();
 
-      const { blob } = res.payload;
+    const fileUrl = res?.fileUrl;
 
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement("a");
+    window.open(fileUrl, "_blank");
 
-      link.href = url;
-      link.setAttribute("download", name || "download");
-
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Download failed", error);
-    }
-  };
+  } catch (error) {
+    console.error("error downloading file:", error);
+  }
+};;
 
   /* ---------------- Status Color ---------------- */
 

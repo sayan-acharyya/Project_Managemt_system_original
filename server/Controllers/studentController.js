@@ -10,6 +10,7 @@ import { Notification } from "../models/notification.js";
 import * as fileServices from "../services/fileServices.js";
 import { title } from "process";
 import { type } from "os";
+import cloudinary from "../config/cloudinary.js";
 
 export const getStudentProject = asyncHandler(async (req, res, next) => {
     const studentId = req.user._id;
@@ -64,25 +65,35 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
 export const uploadFiles = asyncHandler(async (req, res, next) => {
     const { projectId } = req.params;
     const studentId = req.user._id;
+
     const project = await projectServices.getProjectById(projectId);
 
     if (!project || project.student._id.toString() !== studentId.toString()) {
         return next(new ErrorHandler("Not authorized to upload files to this project", 403));
     }
+
     if (!req.files || req.files.length === 0) {
-        return next(new ErrorHandler("No files uploaded", 400))
+        return next(new ErrorHandler("No files uploaded", 400));
     }
+
+    const uploadedFiles = req.files.map(file => ({
+        fileType: file.mimetype,
+        fileUrl: file.path,        // Cloudinary URL
+        originalName: file.originalname
+    }));
 
     const updatedProject = await projectServices.addFilesToProject(
         projectId,
-        req.files
+        uploadedFiles
     );
+
     res.status(200).json({
         success: true,
-        message: "files uploaded successfully.",
+        message: "Files uploaded successfully",
         data: { project: updatedProject }
-    })
-})
+    });
+});
+
 
 export const getAvailableSupervisors = asyncHandler(async (req, res, next) => {
     const supervisors = await User.find({ role: "Teacher" })
@@ -237,6 +248,11 @@ export const downloadFile = asyncHandler(async (req, res, next) => {
     if (!file) {
         return next(new ErrorHandler("File not found", 404));
     }
-    fileServices.streamDownload(file.fileUrl, res, file.originalName);
+
+    return res.status(200).json({
+        success: true,
+        fileUrl: file.fileUrl,
+        originalName: file.originalName
+    })
 })
 

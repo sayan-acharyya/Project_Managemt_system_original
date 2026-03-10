@@ -75,19 +75,25 @@ const AdminDashboard = () => {
   )
 
   const handleDownload = async (projectId, fileId, name) => {
-    const res = await dispatch(downloadProjectFiles({ projectId, fileId })).then(res => {
-      const { blob } = res.payload;
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", name || "download");
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    })
+    try {
+      const res = await dispatch(
+        downloadProjectFiles({ projectId, fileId })
+      ).unwrap();
 
-  }
+      const fileUrl = res?.fileUrl;
+
+      if (!fileUrl) {
+        toast.error("File URL not found");
+        return;
+      }
+
+      window.open(fileUrl, "_blank");
+
+    } catch (error) {
+      console.log("error downloading file:", error);
+      toast.error("Failed to download file. Please try again");
+    }
+  };
 
   const supervisorsBucket = useMemo(() => {
     const map = new Map();
@@ -218,7 +224,7 @@ const AdminDashboard = () => {
   ];
 
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
   // const dashboardCards = [
   //     {
   //       title: "Assigned Students",
@@ -528,6 +534,7 @@ const navigate = useNavigate();
           </div>
         </div>
 
+        {/* MODELS  */}
         {
           isReportsModelOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center">

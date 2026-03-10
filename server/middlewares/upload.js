@@ -3,39 +3,27 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dir, error } from "console";
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import cloudinary from "../config/cloudinary.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-const ensureDirExists = (dir) => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+
+ const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    let folder = "projects";
+    if (req.params.projectId) {
+      folder = `projects/${req.params.projectId}`;
     }
-};
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        let uploadedPath;
-        if (req.route.path.includes("/upload/:projectId")) {
-            uploadedPath = path.join(__dirname, "../uploads/projects", req.params.projectId)
-        }
-        else if (req.route.path.includes("/upload/:userId")) {
-            uploadedPath = path.join(__dirname, "../uploads/users", req.params.userId)
-
-        } else {
-            uploadedPath = path.join(__dirname, "../uploads/temp")
-
-        }
-
-        ensureDirExists(uploadedPath);
-        cb(null, uploadedPath);
-
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
-        const ext = path.extname(file.originalname);
-        cb(null, `${file.filename}-${uniqueSuffix}${ext}`)
-    },
+    return {
+      folder,
+      resource_type: "auto", // Keeps it 'raw' for PDFs
+      access_mode: "public",  // <--- ADD THIS: Ensures the URL is accessible
+      type: "upload",         // <--- ADD THIS: Ensures it's a standard upload
+      public_id: `${Date.now()}-${path.parse(file.originalname).name}`,
+    };
+  },
 });
 
 

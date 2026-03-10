@@ -3,7 +3,7 @@ import * as fileServices from "../services/fileServices.js"
 import { asyncHandler } from "../middlewares/asyncHandler.js"
 import ErrorHandler from "../middlewares/error.js";
 
- 
+
 
 export const downloadFile = asyncHandler(async (req, res, next) => {
     const { projectId, fileId } = req.params;
@@ -29,7 +29,12 @@ export const downloadFile = asyncHandler(async (req, res, next) => {
     if (!file) {
         return next(new ErrorHandler("File not found", 404));
     }
-    fileServices.streamDownload(file.fileUrl, res, file.originalName);
+
+    return res.status(200).json({
+        success: true,
+        fileUrl: file.fileUrl,
+        originalName: file.originalName
+    })
 
 })
 

@@ -84,20 +84,16 @@ const AssignedStudents = () => {
     }
   }
 
-  const sortedStudents = [...(assignedStudents || [])].sort((a, b) => {
-    switch (sortBy) {
-      case "name":
-        return a.name.localCompare(b.name)
-        break;
-      case "lastActivity":
-        return new Date(b.project?.updatedAt) - new Date(a.project.updatedAt)
-        break;
-
-      default:
-        return 0;
-
-    }
-  })
+ const sortedStudents = [...(assignedStudents || [])].sort((a, b) => {
+  switch (sortBy) {
+    case "name":
+      return a.name?.localeCompare(b.name);
+    case "lastActivity":
+      return new Date(b.project?.updatedAt) - new Date(a.project?.updatedAt);
+    default:
+      return 0;
+  }
+});
 
   if (loading) {
     return (

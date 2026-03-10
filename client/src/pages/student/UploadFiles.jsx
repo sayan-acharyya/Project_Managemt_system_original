@@ -69,24 +69,40 @@ const UploadFiles = () => {
     return <File className={`w-8 h-8 ${color}`} />;
   };
 
+  // const handleDownloadFile = async (file) => {
+
+
+  //   const res = await dispatch(
+  //     downloadFile({ projectId: project._id, fileId: file._id })
+  //   ).then(res => {
+  //     const { blob } = res.payload;
+  //     const url = window.URL.createObjectURL(new Blob([blob]));
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", file.name || "download");
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.parentNode.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  //   })
+
+  // }
+
   const handleDownloadFile = async (file) => {
+    try {
+      const res = await dispatch(
+        downloadFile({ projectId: project._id, fileId: file._id })
+      ).unwrap();
 
+      const fileUrl = res?.fileUrl;
+      window.open(fileUrl, "_blank");
 
-    const res = await dispatch(
-      downloadFile({ projectId: project._id, fileId: file._id })
-    ).then(res => {
-      const { blob } = res.payload;
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", file.name || "download");
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    })
+    } catch (error) {
+      console.log("error downloading file:", error);
+      toast.error("Failed to download file. Please try again");
+    }
+  };
 
-  }
 
 
   return (
